@@ -12,6 +12,7 @@ public class StartState extends State {
     public void showMenu() {
         System.out.println("""
                 Для завершения программы введите: exit
+                
                 Для выбора действия введите нужное число в консоль:
                 1. Логин
                 2. Регистрация нового пользователя

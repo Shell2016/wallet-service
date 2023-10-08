@@ -10,11 +10,12 @@ public class LoginGetNameState extends State {
 
     @Override
     public void showMenu() {
+
         System.out.println("""
                 Для завершения программы введите: exit
+                
                 Введите имя пользователя:
                 """);
-
     }
 
     @Override
@@ -27,6 +28,4 @@ public class LoginGetNameState extends State {
         app.setState(LoginGetPasswordState.class);
         return userName;
     }
-
-
 }

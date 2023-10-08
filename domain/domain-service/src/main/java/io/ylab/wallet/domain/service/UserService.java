@@ -27,9 +27,23 @@ public class UserService {
         return userDto;
     }
 
-    public Optional<UserDto> getUserIfValidCredentials(String username, String password) {
+    public Optional<UserDto> getUserDtoIfValidCredentials(String username, String password) {
         return userRepository.getByUsername(username)
                 .filter(user -> user.getPassword().equals(password))
                 .map(userMapper::userToUserDto);
+    }
+
+    public String getBalance(String id) {
+        return userRepository.getById(id)
+                .map(user -> user.getAccount().getBalance().toString())
+                .orElseThrow(() -> new ResourceProcessingException("Не удалось загрузить баланс!"));
+    }
+
+    public Optional<User> getUserById(String id) {
+        return userRepository.getById(id);
+    }
+
+    public void updateUser(User user) {
+        userRepository.save(user);
     }
 }

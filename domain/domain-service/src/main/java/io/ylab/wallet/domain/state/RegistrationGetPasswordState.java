@@ -30,7 +30,7 @@ public class RegistrationGetPasswordState extends State {
         } else if (password.length() < MIN_PASSWORD_LENGTH) {
             throw new ValidationException("Длина пароля должна быть не менее " + MIN_PASSWORD_LENGTH + "  символов!");
         }
-        String username = getContext();
+        String username = getContextAndClear();
         UserDto user;
         try {
             user = app.createUser(username, password);

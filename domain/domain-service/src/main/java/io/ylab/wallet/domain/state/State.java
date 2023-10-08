@@ -25,7 +25,13 @@ public abstract class State {
 
     public static String getContext() {
         String context = CONTEXT.getContext();
+        return context;
+    }
+
+    public static String getContextAndClear() {
+        String context = CONTEXT.getContext();
         clearContext();
         return context;
     }
+
 }

@@ -12,6 +12,7 @@ public class AuthorizedState extends State {
     public void showMenu() {
         System.out.println("""
                 Для завершения программы введите: exit
+                
                 Для выбора действия введите нужное число в консоль:
                 1. Просмотр текущего баланса
                 2. Пополнить
@@ -31,13 +32,13 @@ public class AuthorizedState extends State {
                 System.out.println("Произведен выход из системы...\n");
             }
             case "1" -> {
-                // TODO: 07.10.2023  
+                app.setState(ViewBalanceState.class);
             }
             case "2" -> {
-                // TODO: 07.10.2023  
+                app.setState(DepositState.class);
             }
             case "3" -> {
-                // TODO: 07.10.2023  
+                app.setState(WithdrawalState.class);
             }
             case "4" -> {
                 // TODO: 07.10.2023

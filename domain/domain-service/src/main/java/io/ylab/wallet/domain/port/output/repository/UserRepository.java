@@ -11,4 +11,6 @@ public interface UserRepository {
     boolean existsByUsername(String username);
 
     Optional<User> getByUsername(String username);
+
+    Optional<User> getById(String id);
 }

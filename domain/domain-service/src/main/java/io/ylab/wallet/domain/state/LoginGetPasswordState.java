@@ -25,7 +25,7 @@ public class LoginGetPasswordState extends State {
             clearContext();
             return PASSWORD_MASK;
         }
-        String username = getContext();
+        String username = getContextAndClear();
         app.getUserIfValidCredentials(username, password).ifPresentOrElse(user -> {
                     setContext(user.id().toString());
                     app.setState(AuthorizedState.class);

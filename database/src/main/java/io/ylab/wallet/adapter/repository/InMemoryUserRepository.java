@@ -28,6 +28,11 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public Optional<User> getByUsername(String username) {
-        return Optional.ofNullable(inMemoryUserStorage.getUser(username));
+        return Optional.ofNullable(inMemoryUserStorage.getUserByUsername(username));
+    }
+
+    @Override
+    public Optional<User> getById(String id) {
+        return Optional.ofNullable(inMemoryUserStorage.getUserById(id));
     }
 }

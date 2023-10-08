@@ -1,4 +1,4 @@
-package io.yla.wallet.domain.service;
+package io.ylab.wallet.domain.service;
 
 import io.ylab.wallet.domain.dto.UserDto;
 import io.ylab.wallet.domain.entity.Account;
@@ -6,7 +6,6 @@ import io.ylab.wallet.domain.entity.User;
 import io.ylab.wallet.domain.exception.ResourceProcessingException;
 import io.ylab.wallet.domain.mapper.UserMapper;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
-import io.ylab.wallet.domain.service.UserService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
@@ -24,9 +23,9 @@ class UserServiceTest {
     public static final String USERNAME = "Ivan";
     public static final String PASSWORD = "123456";
 
-    UserRepository userRepository = Mockito.mock(UserRepository.class);
-    UserMapper userMapper = new UserMapper();
-    UserService userService = new UserService(userRepository, userMapper);
+    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    private final UserMapper userMapper = new UserMapper();
+    private final UserService userService = new UserService(userRepository, userMapper);
 
     private UserDto expectedUserDto;
     private User user;
@@ -68,7 +67,7 @@ class UserServiceTest {
     void getUserIfValidCredentials() {
         when(userRepository.getByUsername(USERNAME)).thenReturn(Optional.of(user));
 
-        Optional<UserDto> result = userService.getUserIfValidCredentials(USERNAME, PASSWORD);
+        Optional<UserDto> result = userService.getUserDtoIfValidCredentials(USERNAME, PASSWORD);
 
         assertThat(result.get()).isEqualTo(expectedUserDto);
     }
@@ -77,7 +76,7 @@ class UserServiceTest {
     void getUserIfInvalidCredentials() {
         when(userRepository.getByUsername(USERNAME)).thenReturn(Optional.of(user));
 
-        Optional<UserDto> result = userService.getUserIfValidCredentials(USERNAME, "wrongpass");
+        Optional<UserDto> result = userService.getUserDtoIfValidCredentials(USERNAME, "wrongpass");
 
         assertThat(result).isEmpty();
     }
