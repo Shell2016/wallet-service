@@ -1,7 +1,7 @@
 package io.ylab.wallet.adapter.repository;
 
 
-import io.ylab.wallet.database.storage.InMemoryUserStorage;
+import io.ylab.wallet.database.storage.user.InMemoryUserStorage;
 import io.ylab.wallet.domain.entity.User;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
 

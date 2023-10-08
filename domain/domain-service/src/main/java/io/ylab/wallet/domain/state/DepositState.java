@@ -13,6 +13,7 @@ public class DepositState extends State {
     public void showMenu() {
         System.out.printf("""
                 Для завершения программы введите: exit
+                Для выхода из данного режима введите: esc
                         
                 Введите через пробел в одну строку уникальный идентификатор транзакции и сумму для пополнения, например:
                 adde1e02-1784-4973-956c-80d064309d55 541.05
@@ -24,6 +25,11 @@ public class DepositState extends State {
     @Override
     public String processRequest() {
         String input = app.getInput();
+        if ("esc".equals(input)) {
+            app.setState(AuthorizedState.class);
+
+            return input;
+        }
         String[] inputArray = TransactionUtils.processTransactionInput(input);
         String transactionId = inputArray[0];
         String amount = inputArray[1];

@@ -1,6 +1,8 @@
 package io.ylab.wallet.domain.state;
 
+import io.ylab.wallet.domain.entity.TransactionType;
 import io.ylab.wallet.domain.service.ApplicationService;
+import io.ylab.wallet.domain.service.TransactionUtils;
 
 public class WithdrawalState extends State {
     public WithdrawalState(ApplicationService app) {
@@ -11,6 +13,7 @@ public class WithdrawalState extends State {
     public void showMenu() {
         System.out.printf("""
                 Для завершения программы введите: exit
+                Для выхода из данного режима введите: esc
                         
                 Введите через пробел в одну строку уникальный идентификатор транзакции и сумму для списания, например:
                 adde1e02-1784-4973-956c-80d064309d55 541.05
@@ -21,7 +24,17 @@ public class WithdrawalState extends State {
 
     @Override
     public String processRequest() {
-        app.getInput();
-        return null;
+        String input = app.getInput();
+        if ("esc".equals(input)) {
+            app.setState(AuthorizedState.class);
+
+            return input;
+        }
+        String[] inputArray = TransactionUtils.processTransactionInput(input);
+        String transactionId = inputArray[0];
+        String amount = inputArray[1];
+        app.processTransaction(transactionId, TransactionType.WITHDRAW, amount);
+        app.setState(AuthorizedState.class);
+        return input;
     }
 }

@@ -41,7 +41,7 @@ public class AuthorizedState extends State {
                 app.setState(WithdrawalState.class);
             }
             case "4" -> {
-                // TODO: 07.10.2023
+                app.setState(TransactionHistoryState.class);
             }
             default -> System.out.println("Неизвестная команда!\n");
         }

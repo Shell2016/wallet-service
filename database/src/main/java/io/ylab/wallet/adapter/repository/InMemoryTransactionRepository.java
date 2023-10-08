@@ -1,6 +1,6 @@
 package io.ylab.wallet.adapter.repository;
 
-import io.ylab.wallet.database.storage.InMemoryTransactionStorage;
+import io.ylab.wallet.database.storage.transaction.InMemoryTransactionStorage;
 import io.ylab.wallet.domain.entity.Transaction;
 import io.ylab.wallet.domain.port.output.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;

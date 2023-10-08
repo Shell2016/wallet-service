@@ -2,8 +2,8 @@ package io.ylab.wallet.application;
 
 import io.ylab.wallet.adapter.repository.InMemoryTransactionRepository;
 import io.ylab.wallet.adapter.repository.InMemoryUserRepository;
-import io.ylab.wallet.database.storage.InMemoryTransactionStorage;
-import io.ylab.wallet.database.storage.InMemoryUserStorage;
+import io.ylab.wallet.database.storage.transaction.InMemoryTransactionStorage;
+import io.ylab.wallet.database.storage.user.InMemoryUserStorage;
 import io.ylab.wallet.domain.mapper.UserMapper;
 import io.ylab.wallet.domain.port.input.controller.WalletController;
 import io.ylab.wallet.domain.port.output.repository.TransactionRepository;

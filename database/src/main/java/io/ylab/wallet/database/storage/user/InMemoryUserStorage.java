@@ -1,4 +1,4 @@
-package io.ylab.wallet.database.storage;
+package io.ylab.wallet.database.storage.user;
 
 
 import io.ylab.wallet.domain.entity.User;

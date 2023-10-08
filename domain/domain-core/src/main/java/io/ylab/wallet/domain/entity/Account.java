@@ -1,6 +1,6 @@
 package io.ylab.wallet.domain.entity;
 
-import io.ylab.wallet.domain.exception.TransactionException;
+import io.ylab.wallet.domain.exception.BalanceValidationException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,7 +35,7 @@ public class Account {
 
     private void validateWithdrawal(BigDecimal amount) {
         if (!isGreaterThanOrEqual(amount)) {
-            throw new TransactionException("Недостаточно средств на счете!");
+            throw new BalanceValidationException("Недостаточно средств на счете!");
         }
     }
 

@@ -1,7 +1,7 @@
 package io.ylab.wallet.domain;
 
 import io.ylab.wallet.domain.entity.Account;
-import io.ylab.wallet.domain.exception.TransactionException;
+import io.ylab.wallet.domain.exception.BalanceValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +39,7 @@ class AccountTest {
          account.deposit(AMOUNT_10000);
 
          assertThatThrownBy(() -> account.withdraw(BigDecimal.valueOf(10001)))
-                 .isInstanceOf(TransactionException.class)
+                 .isInstanceOf(BalanceValidationException.class)
                  .hasMessage("Недостаточно средств на счете!");
     }
 

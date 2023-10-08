@@ -1,8 +1,7 @@
 package io.ylab.wallet.domain.service;
 
 import io.ylab.wallet.domain.dto.UserDto;
-import io.ylab.wallet.domain.entity.Account;
-import io.ylab.wallet.domain.entity.TransactionType;
+import io.ylab.wallet.domain.entity.*;
 import io.ylab.wallet.domain.exception.DomainException;
 import io.ylab.wallet.domain.port.input.controller.WalletController;
 import io.ylab.wallet.domain.state.*;
@@ -14,6 +13,7 @@ public class ApplicationService {
     private final WalletController controller;
     private final UserService userService;
     private final TransactionService transactionService;
+    private final AuditService auditService;
     private final Map<Class<? extends State>, State> states = new HashMap<>();
 
     public ApplicationService(WalletController controller,
@@ -36,6 +36,7 @@ public class ApplicationService {
         states.put(ViewBalanceState.class, new ViewBalanceState(this));
         states.put(WithdrawalState.class, new WithdrawalState(this));
         states.put(DepositState.class, new DepositState(this));
+        states.put(TransactionHistoryState.class, new TransactionHistoryState(this));
 
     }
 
@@ -99,5 +100,10 @@ public class ApplicationService {
         String userId = State.getContext();
         Account account = transactionService.processTransaction(transactionId, userId, type, amount);
         return account.getBalance().toString();
+    }
+
+    public List<Transaction> getUserTransactions() {
+        String userId = State.getContext();
+        return transactionService.getUserTransactions(userId);
     }
 }
