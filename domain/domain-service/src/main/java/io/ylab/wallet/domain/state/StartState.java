@@ -25,6 +25,8 @@ public class StartState extends State {
             app.setState(RegistrationGetNameState.class);
         } else if ("1".equals(input)) {
             app.setState(LoginGetNameState.class);
+        } else if ("getAudit".equals(input)) {
+            app.printAudit();
         }
         return input;
     }

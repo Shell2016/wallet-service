@@ -6,6 +6,8 @@ import io.ylab.wallet.domain.service.ApplicationService;
 
 public class RegistrationGetNameState extends State {
 
+    public static final String EMPTY_STRING_ERROR_MESSAGE = "Поле имя не должно быть пустым!";
+
     public RegistrationGetNameState(ApplicationService app) {
         super(app);
     }
@@ -19,7 +21,8 @@ public class RegistrationGetNameState extends State {
     public String processRequest() {
         String userName = app.getInput().trim();
         if (userName.isEmpty()) {
-            throw new ValidationException("Поле не должно быть пустым!");
+            app.audit("Registration error: " + EMPTY_STRING_ERROR_MESSAGE);
+            throw new ValidationException(EMPTY_STRING_ERROR_MESSAGE);
         }
         setContext(userName);
         app.setState(RegistrationGetPasswordState.class);

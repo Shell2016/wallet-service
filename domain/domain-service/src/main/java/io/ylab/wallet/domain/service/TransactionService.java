@@ -31,12 +31,12 @@ public class TransactionService {
                 .toList();
     }
 
-    public Account processTransaction(String transactionId,
+    public Transaction processTransaction(String transactionId,
                                       String userId,
                                       TransactionType type,
                                       String amount) {
         if (transactionExists(transactionId)) {
-            throw new TransactionException("Транзакция с данным идентификатором уже зарегистрирована в системе!");
+            throw new TransactionException("Транзакция с id=" + transactionId + " уже зарегистрирована в системе!");
         }
         User user = userService.getUserById(userId).orElseThrow(
                 () -> new UserNotFoundException("Пользователь не найден!"));
@@ -47,8 +47,7 @@ public class TransactionService {
             account.withdraw(new BigDecimal(amount));
         }
         userService.updateUser(user);
-        saveTransaction(transactionId, userId, type, amount);
-        return account;
+        return saveTransaction(transactionId, userId, type, amount);
     }
 
     private Transaction saveTransaction(String transactionId,

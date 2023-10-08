@@ -9,6 +9,7 @@ import io.ylab.wallet.domain.service.ApplicationService;
 public class RegistrationGetPasswordState extends State {
 
     public static final int MIN_PASSWORD_LENGTH = 6;
+    public static final String PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE = "Длина пароля должна быть не менее " + MIN_PASSWORD_LENGTH + " символов!";
     public static final String PASSWORD_MASK = "********";
 
     public RegistrationGetPasswordState(ApplicationService app) {
@@ -28,19 +29,22 @@ public class RegistrationGetPasswordState extends State {
             clearContext();
             return PASSWORD_MASK;
         } else if (password.length() < MIN_PASSWORD_LENGTH) {
-            throw new ValidationException("Длина пароля должна быть не менее " + MIN_PASSWORD_LENGTH + "  символов!");
+            app.audit("Ошибка регистрации: " + PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE);
+            throw new ValidationException(PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE);
         }
         String username = getContextAndClear();
         UserDto user;
         try {
             user = app.createUser(username, password);
         } catch (ResourceProcessingException e) {
+            app.audit("Registration error: userName=" + username + e.getMessage());
             app.setState(StartState.class);
             clearContext();
             throw e;
         }
         setContext(user.id().toString());
         app.setState(AuthorizedState.class);
+        app.audit("Successful registration: userName=" + username + ", id=" + user.id());
         return PASSWORD_MASK;
     }
 }

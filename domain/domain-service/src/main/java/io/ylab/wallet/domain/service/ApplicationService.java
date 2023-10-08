@@ -18,10 +18,11 @@ public class ApplicationService {
 
     public ApplicationService(WalletController controller,
                               UserService userService,
-                              TransactionService transactionService) {
+                              TransactionService transactionService, AuditService auditService) {
         this.controller = controller;
         this.userService = userService;
         this.transactionService = transactionService;
+        this.auditService = auditService;
         initializeStates();
         setState(StartState.class);
     }
@@ -37,7 +38,6 @@ public class ApplicationService {
         states.put(WithdrawalState.class, new WithdrawalState(this));
         states.put(DepositState.class, new DepositState(this));
         states.put(TransactionHistoryState.class, new TransactionHistoryState(this));
-
     }
 
     public void setState(Class<? extends State> clazz) {
@@ -55,6 +55,7 @@ public class ApplicationService {
             try {
                 input = processRequest();
             } catch (DomainException e) {
+//                auditService.audit(e.getMessage());
                 System.out.println(e.getMessage());
             }
             if (exitRequestReceived(input)) {
@@ -96,14 +97,21 @@ public class ApplicationService {
         return transactionService.generateId();
     }
 
-    public String processTransaction(String transactionId, TransactionType type, String amount) {
+    public Transaction processTransaction(String transactionId, TransactionType type, String amount) {
         String userId = State.getContext();
-        Account account = transactionService.processTransaction(transactionId, userId, type, amount);
-        return account.getBalance().toString();
+        return transactionService.processTransaction(transactionId, userId, type, amount);
     }
 
     public List<Transaction> getUserTransactions() {
         String userId = State.getContext();
         return transactionService.getUserTransactions(userId);
+    }
+
+    public void audit(String info) {
+        auditService.audit(info);
+    }
+
+    public void printAudit() {
+        auditService.getAuditInfo().forEach(System.out::println);
     }
 }

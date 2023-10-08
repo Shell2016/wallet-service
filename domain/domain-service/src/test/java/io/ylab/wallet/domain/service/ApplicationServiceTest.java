@@ -29,7 +29,7 @@ class ApplicationServiceTest {
 
     @BeforeEach
     void init() {
-        applicationService = new ApplicationService(controller, userService, transactionService);
+        applicationService = new ApplicationService(controller, userService, transactionService, auditService);
         System.setOut(new PrintStream(outputStream));
     }
 

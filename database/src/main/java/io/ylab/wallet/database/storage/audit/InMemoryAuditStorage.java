@@ -1,5 +1,7 @@
 package io.ylab.wallet.database.storage.audit;
 
+import io.ylab.wallet.domain.dto.AuditItem;
+
 import java.util.*;
 
 public class InMemoryAuditStorage {
@@ -9,7 +11,7 @@ public class InMemoryAuditStorage {
         return auditStorage;
     }
 
-    public void addAudit(AuditItem audit) {
+    public void addAuditItem(AuditItem audit) {
         auditStorage.add(audit);
     }
 

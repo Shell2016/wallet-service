@@ -1,5 +1,6 @@
 package io.ylab.wallet.domain.state;
 
+import io.ylab.wallet.domain.entity.Transaction;
 import io.ylab.wallet.domain.entity.TransactionType;
 import io.ylab.wallet.domain.service.ApplicationService;
 import io.ylab.wallet.domain.service.TransactionUtils;
@@ -27,13 +28,20 @@ public class WithdrawalState extends State {
         String input = app.getInput();
         if ("esc".equals(input)) {
             app.setState(AuthorizedState.class);
-
+            app.audit("Transaction cancelled by user " + State.getContext());
             return input;
         }
-        String[] inputArray = TransactionUtils.processTransactionInput(input);
-        String transactionId = inputArray[0];
-        String amount = inputArray[1];
-        app.processTransaction(transactionId, TransactionType.WITHDRAW, amount);
+        Transaction transaction;
+        try {
+            String[] inputArray = TransactionUtils.processTransactionInput(input);
+            String transactionId = inputArray[0];
+            String amount = inputArray[1];
+            transaction = app.processTransaction(transactionId, TransactionType.WITHDRAW, amount);
+        } catch (RuntimeException e) {
+            app.audit("Transaction error: " + e.getMessage());
+            throw e;
+        }
+        app.audit("Transaction success: " + transaction);
         app.setState(AuthorizedState.class);
         return input;
     }

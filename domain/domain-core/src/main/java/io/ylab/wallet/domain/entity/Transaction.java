@@ -30,4 +30,15 @@ public class Transaction {
     public int hashCode() {
         return id.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", amount=" + amount +
+                ", type=" + type +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }
