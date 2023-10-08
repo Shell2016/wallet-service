@@ -4,10 +4,17 @@ import io.ylab.wallet.domain.exception.TransactionException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.UUID;
 
 public class Account {
 
+    private final UUID userId;
+
     private BigDecimal balance = setScale(BigDecimal.ZERO);
+
+    public Account(UUID userId) {
+        this.userId = userId;
+    }
 
     public BigDecimal getBalance() {
         return balance;
@@ -38,5 +45,23 @@ public class Account {
 
     private BigDecimal setScale(BigDecimal input) {
         return input.setScale(2, RoundingMode.HALF_EVEN);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Account account = (Account) o;
+
+        if (!userId.equals(account.userId)) return false;
+        return balance.equals(account.balance);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userId.hashCode();
+        result = 31 * result + balance.hashCode();
+        return result;
     }
 }

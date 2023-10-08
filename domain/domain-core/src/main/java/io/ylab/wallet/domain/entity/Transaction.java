@@ -1,9 +1,13 @@
 package io.ylab.wallet.domain.entity;
 
+import lombok.Builder;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class Transaction extends BaseEntity<UUID> {
+@Builder
+public class Transaction {
+    private final UUID id;
     private BigDecimal amount;
     private TransactionType type;
 }

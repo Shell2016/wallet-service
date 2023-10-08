@@ -7,17 +7,19 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
 class AccountTest {
 
     public static final BigDecimal AMOUNT_10000 = BigDecimal.valueOf(10000);
+    public static final UUID UUID = java.util.UUID.fromString("adde1e02-1784-4973-956c-80d064309d55");
     private Account account;
 
     @BeforeEach
     void init() {
-        account = new Account();
+        account = new Account(UUID);
     }
 
     @Test

@@ -1,15 +1,20 @@
 package io.ylab.wallet.domain.entity;
 
-import java.util.UUID;
+import lombok.Getter;
 
-public class User extends BaseEntity<UUID> {
+import java.util.UUID;
+@Getter
+public class User {
+    private final UUID id;
     private final String username;
     private final String password;
-    private final Account account = new Account();
+    private final Account account;
 
-    public User(String username, String password) {
+    public User(UUID id, String username, String password) {
+        this.id = id;
         this.username = username;
         this.password = password;
+        this.account = new Account(id);
     }
 
     public String getUsername() {
@@ -22,5 +27,20 @@ public class User extends BaseEntity<UUID> {
 
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
