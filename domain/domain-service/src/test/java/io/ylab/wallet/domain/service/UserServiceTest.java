@@ -69,7 +69,7 @@ class UserServiceTest {
 
         Optional<UserDto> result = userService.getUserDtoIfValidCredentials(USERNAME, PASSWORD);
 
-        assertThat(result.get()).isEqualTo(expectedUserDto);
+        assertThat(result).contains(expectedUserDto);
     }
 
     @Test
@@ -79,5 +79,38 @@ class UserServiceTest {
         Optional<UserDto> result = userService.getUserDtoIfValidCredentials(USERNAME, "wrongpass");
 
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getBalance() {
+        when(userRepository.getById(USER_UUID.toString())).thenReturn(Optional.of(user));
+        String balance = userService.getBalance(USER_UUID.toString());
+
+        assertThat(balance).isEqualTo("0.00");
+    }
+
+    @Test
+    void getUserByIdIfNotExists() {
+        when(userRepository.getById(USER_UUID.toString())).thenReturn(Optional.empty());
+
+        Optional<User> result = userService.getUserById(USER_UUID.toString());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getUserByIdIfExists() {
+        when(userRepository.getById(USER_UUID.toString())).thenReturn(Optional.of(user));
+
+        Optional<User> result = userService.getUserById(USER_UUID.toString());
+
+        assertThat(result).contains(user);
+    }
+
+    @Test
+    void updateUser() {
+        userService.updateUser(user);
+
+        verify(userRepository).save(user);
     }
 }

@@ -16,11 +16,14 @@ class ApplicationServiceTest {
 
     public static final String EXPECTED_OUTPUT = """
                 Для завершения программы введите: exit
+                
                 Для выбора действия введите нужное число в консоль:
                 1. Логин
                 2. Регистрация нового пользователя""";
     private final WalletController controller = Mockito.mock(WalletController.class);
     private final UserService userService = Mockito.mock(UserService.class);
+    private final TransactionService transactionService = Mockito.mock(TransactionService.class);
+    private final AuditService auditService = Mockito.mock(AuditService.class);
 
     private ApplicationService applicationService;
 
@@ -57,5 +60,4 @@ class ApplicationServiceTest {
 
         assertThat(EXPECTED_OUTPUT).isEqualTo(printedOutput);
     }
-
 }

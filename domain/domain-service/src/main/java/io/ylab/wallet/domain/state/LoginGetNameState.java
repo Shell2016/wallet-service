@@ -4,7 +4,7 @@ import io.ylab.wallet.domain.exception.ValidationException;
 import io.ylab.wallet.domain.service.ApplicationService;
 
 /**
- * State for managing first login phase, processing user name.
+ * State for managing first login phase, processing username.
  * While system in this state - State.getContext() == null
  */
 public class LoginGetNameState extends State {

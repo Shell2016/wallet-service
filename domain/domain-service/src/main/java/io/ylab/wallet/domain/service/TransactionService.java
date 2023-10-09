@@ -67,7 +67,8 @@ public class TransactionService {
                                       TransactionType type,
                                       String amount) {
         if (transactionExists(transactionId)) {
-            throw new TransactionException("Транзакция с id=" + transactionId + " уже зарегистрирована в системе!");
+            throw new TransactionException("Транзакция с id=" + transactionId + " уже зарегистрирована в системе!\n" +
+                    "Операция отклонена!");
         }
         User user = userService.getUserById(userId).orElseThrow(
                 () -> new UserNotFoundException("Пользователь не найден!"));

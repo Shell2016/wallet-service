@@ -4,22 +4,20 @@ package io.ylab.wallet.adapter.repository;
 import io.ylab.wallet.database.storage.InMemoryUserStorage;
 import io.ylab.wallet.domain.entity.User;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
 /**
  * In-memory implementation of UserRepository.
  */
+@RequiredArgsConstructor
 public class InMemoryUserRepository implements UserRepository {
 
     /**
      * Data storage for user information.
      */
     private final InMemoryUserStorage inMemoryUserStorage;
-
-    public InMemoryUserRepository(InMemoryUserStorage inMemoryUserStorage) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
-    }
 
     /**
      * Saves user to database.
