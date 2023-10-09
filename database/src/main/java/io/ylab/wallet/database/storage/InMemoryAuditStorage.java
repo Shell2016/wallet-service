@@ -1,9 +1,12 @@
-package io.ylab.wallet.database.storage.audit;
+package io.ylab.wallet.database.storage;
 
 import io.ylab.wallet.domain.dto.AuditItem;
 
 import java.util.*;
 
+/**
+ * In-memory storage for audit data.
+ */
 public class InMemoryAuditStorage {
     private static final List<AuditItem> auditStorage = new ArrayList<>();
 

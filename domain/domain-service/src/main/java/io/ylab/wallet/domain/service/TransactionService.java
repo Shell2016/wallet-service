@@ -11,26 +11,57 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service that contains transaction business logic.
+ */
 @RequiredArgsConstructor
 public class TransactionService {
 
+    /**
+     * Injection of repository to persist transaction data.
+     */
     private final TransactionRepository repository;
+    /**
+     * Injection of service that contains user business logic.
+     */
     private final UserService userService;
 
+    /**
+     * Generates random UUID
+     * @return new UUID as string
+     */
     public String generateId() {
         return UUID.randomUUID().toString();
     }
 
+    /**
+     * Checks if transaction with given id already exists.
+     * @param id of transaction to check
+     * @return true if transaction exists in database
+     */
     public boolean transactionExists(String id) {
         return repository.exists(id);
     }
 
+    /**
+     * Gets list of current user's transactions.
+     * @param userId of current user
+     * @return list of current user's transactions
+     */
     public List<Transaction> getUserTransactions(String userId) {
         return repository.getAll().stream()
                 .filter(transaction -> transaction.getUserId().toString().equals(userId))
                 .toList();
     }
 
+    /**
+     * Processes transaction.
+     * @param transactionId of new transaction
+     * @param userId of current user
+     * @param type of transaction (deposit/withdraw)
+     * @param amount of money
+     * @return Transaction
+     */
     public Transaction processTransaction(String transactionId,
                                       String userId,
                                       TransactionType type,
@@ -50,6 +81,14 @@ public class TransactionService {
         return saveTransaction(transactionId, userId, type, amount);
     }
 
+    /**
+     * Saves transaction.
+     * @param transactionId of new transaction
+     * @param userId of current user
+     * @param type of transaction (deposit/withdraw)
+     * @param amount of money
+     * @return Transaction
+     */
     private Transaction saveTransaction(String transactionId,
                                         String userId,
                                         TransactionType type,

@@ -7,9 +7,15 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Service that contains audit business logic.
+ */
 @RequiredArgsConstructor
 public class AuditService {
 
+    /**
+     * Injection of repository to persist audit info.
+     */
     private final AuditRepository auditRepository;
 
     public void audit(String info) {
@@ -19,6 +25,10 @@ public class AuditService {
                 .build());
     }
 
+    /**
+     * Gets list of audits.
+     * @return list of audits
+     */
     public List<AuditItem> getAuditInfo() {
         return auditRepository.getAuditInfo();
     }

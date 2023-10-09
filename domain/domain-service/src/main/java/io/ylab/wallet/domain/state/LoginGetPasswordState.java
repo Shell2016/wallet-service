@@ -3,7 +3,10 @@ package io.ylab.wallet.domain.state;
 import io.ylab.wallet.domain.exception.InvalidCredentialsException;
 import io.ylab.wallet.domain.service.ApplicationService;
 
-
+/**
+ * State for managing second login phase, processing user password.
+ * While system in this state - State.getContext() returns userName required for login
+ */
 public class LoginGetPasswordState extends State {
 
     public static final String PASSWORD_MASK = "********";
@@ -13,11 +16,18 @@ public class LoginGetPasswordState extends State {
         super(app);
     }
 
+    /**
+     * Shows user prompt for password.
+     */
     @Override
     public void showMenu() {
         System.out.println("Введите пароль или 'esc' для отмены");
     }
 
+    /**
+     * Processes username and password.
+     * @return password mask
+     */
     @Override
     public String processRequest() {
         String password = app.getInput().trim();

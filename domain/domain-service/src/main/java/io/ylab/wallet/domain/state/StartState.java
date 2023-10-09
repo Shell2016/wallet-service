@@ -2,12 +2,19 @@ package io.ylab.wallet.domain.state;
 
 import io.ylab.wallet.domain.service.ApplicationService;
 
+/**
+ * Initial state when program starts or user is not authenticated.
+ * While system in this state - State.getContext() returns userName required for registration
+ */
 public class StartState extends State {
 
     public StartState(ApplicationService app) {
         super(app);
     }
 
+    /**
+     * Shows initial menu.
+     */
     @Override
     public void showMenu() {
         System.out.println("""
@@ -19,6 +26,10 @@ public class StartState extends State {
                 """);
     }
 
+    /**
+     * Processing user input.
+     * @return user input
+     */
     public String processRequest() {
         String input = app.getInput();
         if ("2".equals(input)) {
@@ -30,8 +41,4 @@ public class StartState extends State {
         }
         return input;
     }
-
-
-
-
 }

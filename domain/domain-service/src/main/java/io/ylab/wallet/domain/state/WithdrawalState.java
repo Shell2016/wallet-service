@@ -5,11 +5,18 @@ import io.ylab.wallet.domain.entity.TransactionType;
 import io.ylab.wallet.domain.service.ApplicationService;
 import io.ylab.wallet.domain.service.TransactionUtils;
 
+/**
+ * State for processing withdrawal transaction from authorized users.
+ * While system in this state - State.getContext() will return userId of authorized user.
+ */
 public class WithdrawalState extends State {
     public WithdrawalState(ApplicationService app) {
         super(app);
     }
 
+    /**
+     * Shows instructions to complete transaction.
+     */
     @Override
     public void showMenu() {
         System.out.printf("""
@@ -23,6 +30,10 @@ public class WithdrawalState extends State {
                 %n""", app.generateTransactionId());
     }
 
+    /**
+     * Processes transaction request.
+     * @return user input
+     */
     @Override
     public String processRequest() {
         String input = app.getInput();

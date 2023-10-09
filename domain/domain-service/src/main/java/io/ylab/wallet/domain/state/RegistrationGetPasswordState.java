@@ -6,6 +6,10 @@ import io.ylab.wallet.domain.exception.ResourceProcessingException;
 import io.ylab.wallet.domain.exception.ValidationException;
 import io.ylab.wallet.domain.service.ApplicationService;
 
+/**
+ * State for managing second login phase, processing user password.
+ * While system in this state - State.getContext() returns userName required for registration
+ */
 public class RegistrationGetPasswordState extends State {
 
     public static final int MIN_PASSWORD_LENGTH = 6;
@@ -16,11 +20,18 @@ public class RegistrationGetPasswordState extends State {
         super(app);
     }
 
+    /**
+     * Shows user prompt for password.
+     */
     @Override
     public void showMenu() {
         System.out.println("Введите пароль (минимум " + MIN_PASSWORD_LENGTH + " символов) или 'esc' для отмены");
     }
 
+    /**
+     * Processing username and password.
+     * @return user input
+     */
     @Override
     public String processRequest() {
         String password = app.getInput().trim();

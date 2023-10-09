@@ -11,6 +11,9 @@ public class AuthorizedState extends State {
         super(app);
     }
 
+    /**
+     * Shows user menu to authorized user.
+     */
     @Override
     public void showMenu() {
         System.out.println("""
@@ -25,6 +28,10 @@ public class AuthorizedState extends State {
                 """);
     }
 
+    /**
+     * Processes requests from authorized user.
+     * @return user input as string
+     */
     @Override
     public String processRequest() {
         String input = app.getInput();

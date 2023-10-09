@@ -4,6 +4,9 @@ import io.ylab.wallet.domain.port.input.controller.WalletController;
 
 import java.io.*;
 
+/**
+ * Concrete console WalletController implementation.
+ */
 public class WalletConsoleController implements WalletController {
 
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -15,9 +18,7 @@ public class WalletConsoleController implements WalletController {
             input = reader.readLine();
         } catch (IOException e) {
             System.out.println("Ошибка ввода!");
-            ;
         }
         return input;
     }
-
 }

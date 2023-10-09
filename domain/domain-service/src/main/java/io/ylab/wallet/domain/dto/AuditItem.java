@@ -5,6 +5,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+/**
+ * Class for storing audit info.
+ */
 @Builder
 @Getter
 public class AuditItem {

@@ -4,6 +4,10 @@ import io.ylab.wallet.domain.entity.User;
 
 import java.util.Optional;
 
+/**
+ * Interface for interacting with user data storage.
+ * Acts as output port in onion architecture.
+ */
 public interface UserRepository {
 
     User save(User user);

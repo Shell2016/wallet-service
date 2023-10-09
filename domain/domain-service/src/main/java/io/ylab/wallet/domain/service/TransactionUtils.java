@@ -6,6 +6,9 @@ import lombok.experimental.UtilityClass;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Utility class for common transaction methods.
+ */
 @UtilityClass
 public class TransactionUtils {
 

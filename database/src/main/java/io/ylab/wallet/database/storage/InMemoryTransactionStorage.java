@@ -1,10 +1,13 @@
-package io.ylab.wallet.database.storage.transaction;
+package io.ylab.wallet.database.storage;
 
 
 import io.ylab.wallet.domain.entity.Transaction;
 
 import java.util.*;
 
+/**
+ * In-memory storage for transaction data.
+ */
 public class InMemoryTransactionStorage {
     private final Map<String, Transaction> transactions = new LinkedHashMap<>();
 
