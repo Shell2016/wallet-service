@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class InMemoryAuditRepositoryTest {
 
-    public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2023, 10, 9, 12, 0);
-    public static final String SOME_AUDIT_INFO = "Some audit info";
+    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2023, 10, 9, 12, 0);
+    private static final String SOME_AUDIT_INFO = "Some audit info";
     private static final AuditItem AUDIT_ITEM = AuditItem.builder()
             .time(LOCAL_DATE_TIME)
             .info(SOME_AUDIT_INFO)

@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 
 class ApplicationServiceTest {
 
-    public static final String EXPECTED_OUTPUT = """
+    private static final String EXPECTED_OUTPUT = """
                 Для завершения программы введите: exit
                 
                 Для выбора действия введите нужное число в консоль:
@@ -58,6 +58,6 @@ class ApplicationServiceTest {
         applicationService.run();
         String printedOutput = outputStream.toString().trim();
 
-        assertThat(EXPECTED_OUTPUT).isEqualTo(printedOutput);
+        assertThat(printedOutput).isEqualTo(EXPECTED_OUTPUT);
     }
 }

@@ -19,9 +19,9 @@ import static org.mockito.Mockito.*;
 
 class UserServiceTest {
 
-    public static final UUID USER_UUID = UUID.fromString("adde1e02-1784-4973-956c-80d064309d55");
-    public static final String USERNAME = "Ivan";
-    public static final String PASSWORD = "123456";
+    private static final UUID USER_UUID = UUID.fromString("adde1e02-1784-4973-956c-80d064309d55");
+    private static final String USERNAME = "Ivan";
+    private static final String PASSWORD = "123456";
 
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
     private final UserMapper userMapper = new UserMapper();

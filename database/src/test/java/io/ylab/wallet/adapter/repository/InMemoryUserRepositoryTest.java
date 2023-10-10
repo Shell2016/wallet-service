@@ -13,10 +13,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class InMemoryUserRepositoryTest {
 
-    public static final String TESTNAME = "testname";
-    public static final String PASSWORD = "password";
-    public static final String UUID_USER_STRING = "cc6227ae-6a83-4888-9538-df7062c572fe";
-    public static final User USER = new User(UUID.fromString(UUID_USER_STRING), TESTNAME, PASSWORD);
+    private static final String TESTNAME = "testname";
+    private static final String PASSWORD = "password";
+    private static final String UUID_USER_STRING = "cc6227ae-6a83-4888-9538-df7062c572fe";
+    private static final User USER = new User(UUID.fromString(UUID_USER_STRING), TESTNAME, PASSWORD);
     private UserRepository userRepository;
 
     @BeforeEach

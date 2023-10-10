@@ -15,19 +15,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class InMemoryTransactionRepositoryTest {
 
-    public static final String UUID_TRANSACTION_STRING = "8eeb3622-5c1b-4067-9f94-1dc22fac11b9";
-    public static final String UUID_TRANSACTION_STRING2 = "8eeb3622-5c1b-4067-9f94-1dc22fac11b8";
-    public static final String UUID_USER_STRING = "cc6227ae-6a83-4888-9538-df7062c572fe";
-    public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2023, 10, 9, 12, 0);
-    public static final BigDecimal AMOUNT = BigDecimal.valueOf(10000);
-    public static final Transaction TRANSACTION = Transaction.builder()
+    private static final String UUID_TRANSACTION_STRING = "8eeb3622-5c1b-4067-9f94-1dc22fac11b9";
+    private static final String UUID_TRANSACTION_STRING2 = "8eeb3622-5c1b-4067-9f94-1dc22fac11b8";
+    private static final String UUID_USER_STRING = "cc6227ae-6a83-4888-9538-df7062c572fe";
+    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2023, 10, 9, 12, 0);
+    private static final BigDecimal AMOUNT = BigDecimal.valueOf(10000);
+    private static final Transaction TRANSACTION = Transaction.builder()
             .id(UUID.fromString(UUID_TRANSACTION_STRING))
             .userId(UUID.fromString(UUID_USER_STRING))
             .amount(AMOUNT)
             .createdAt(LOCAL_DATE_TIME)
             .type(TransactionType.DEPOSIT)
             .build();
-    public static final Transaction TRANSACTION2 = Transaction.builder()
+    private static final Transaction TRANSACTION2 = Transaction.builder()
             .id(UUID.fromString(UUID_TRANSACTION_STRING2))
             .userId(UUID.fromString(UUID_USER_STRING))
             .amount(AMOUNT)

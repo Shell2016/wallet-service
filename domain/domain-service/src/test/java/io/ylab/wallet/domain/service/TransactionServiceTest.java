@@ -14,41 +14,41 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class TransactionServiceTest {
+class TransactionServiceTest {
 
-    public static final String UUID_TRANSACTION1 = "adde1e02-1784-4973-956c-80d064309d55";
-    public static final String UUID_TRANSACTION2 = "adde1e02-1784-4973-956c-80d064309d56";
-    public static final String UUID_TRANSACTION3 = "adde1e02-1784-4973-956c-80d064309d57";
-    public static final String UUID_USER_STRING1 = "cc6227ae-6a83-4888-9538-df7062c572fe";
-    public static final String UUID_USER_STRING2 = "cc6227ae-6a83-4888-9537-df7062c572fe";
-    public static final BigDecimal AMOUNT = BigDecimal.valueOf(10000);
-    public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(
+    private static final String UUID_TRANSACTION1 = "adde1e02-1784-4973-956c-80d064309d55";
+    private static final String UUID_TRANSACTION2 = "adde1e02-1784-4973-956c-80d064309d56";
+    private static final String UUID_TRANSACTION3 = "adde1e02-1784-4973-956c-80d064309d57";
+    private static final String UUID_USER_STRING1 = "cc6227ae-6a83-4888-9538-df7062c572fe";
+    private static final String UUID_USER_STRING2 = "cc6227ae-6a83-4888-9537-df7062c572fe";
+    private static final BigDecimal AMOUNT = BigDecimal.valueOf(10000);
+    private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(
             2023, 10, 9, 12, 0);
-    public static final Transaction TRANSACTION1_USER1 = Transaction.builder()
+    private static final Transaction TRANSACTION1_USER1 = Transaction.builder()
             .id(UUID.fromString(UUID_TRANSACTION1))
             .userId(UUID.fromString(UUID_USER_STRING1))
             .amount(AMOUNT)
             .createdAt(LOCAL_DATE_TIME)
             .type(TransactionType.DEPOSIT)
             .build();
-    public static final Transaction TRANSACTION2_USER1 = Transaction.builder()
+    private static final Transaction TRANSACTION2_USER1 = Transaction.builder()
             .id(UUID.fromString(UUID_TRANSACTION2))
             .userId(UUID.fromString(UUID_USER_STRING1))
             .amount(AMOUNT)
             .createdAt(LOCAL_DATE_TIME)
             .type(TransactionType.DEPOSIT)
             .build();
-    public static final Transaction TRANSACTION1_USER2 = Transaction.builder()
+    private static final Transaction TRANSACTION1_USER2 = Transaction.builder()
             .id(UUID.fromString(UUID_TRANSACTION3))
             .userId(UUID.fromString(UUID_USER_STRING2))
             .amount(AMOUNT)
             .createdAt(LOCAL_DATE_TIME)
             .type(TransactionType.DEPOSIT)
             .build();
-    public static final String TRANSACTION_EXISTS_ERROR_MESSAGE =
+    private static final String TRANSACTION_EXISTS_ERROR_MESSAGE =
             "Транзакция с id=" + UUID_TRANSACTION1 + " уже зарегистрирована в системе!\n" +
                     "Операция отклонена!";
-    public static final User USER = new User(UUID.fromString(UUID_USER_STRING1), "testname", "123456");
+    private static final User USER = new User(UUID.fromString(UUID_USER_STRING1), "testname", "123456");
 
     private final TransactionRepository transactionRepository = Mockito.mock(TransactionRepository.class);
     private final UserService userService = Mockito.mock(UserService.class);
