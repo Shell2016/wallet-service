@@ -13,7 +13,8 @@ import io.ylab.wallet.domain.service.ApplicationService;
 public class RegistrationGetPasswordState extends State {
 
     public static final int MIN_PASSWORD_LENGTH = 6;
-    public static final String PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE = "Длина пароля должна быть не менее " + MIN_PASSWORD_LENGTH + " символов!";
+    public static final String PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE =
+            "Длина пароля должна быть не менее " + MIN_PASSWORD_LENGTH + " символов!";
 
     public RegistrationGetPasswordState(ApplicationService app) {
         super(app);

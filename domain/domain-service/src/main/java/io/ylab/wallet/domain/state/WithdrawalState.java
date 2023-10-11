@@ -38,6 +38,7 @@ public class WithdrawalState extends State {
         if ("esc".equals(input)) {
             app.setState(AuthorizedState.class);
             app.audit("Transaction cancelled by user " + State.getContext());
+            return;
         }
         Transaction transaction;
         try {
