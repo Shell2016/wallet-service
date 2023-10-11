@@ -17,17 +17,17 @@ import static org.mockito.Mockito.*;
 
 class RegistrationGetPasswordStateTest {
 
-    public static final String USERNAME = "test1";
-    public static final String PASSWORD = "123456";
-    public static final String USER_ID = "0ff72a9a-a7a3-4c17-a25e-b5ef5215d528";
-    public static final int MIN_PASSWORD_LENGTH = 6;
-    public static final String PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE =
+    private static final String USERNAME = "test1";
+    private static final String PASSWORD = "123456";
+    private static final String USER_ID = "0ff72a9a-a7a3-4c17-a25e-b5ef5215d528";
+    private static final int MIN_PASSWORD_LENGTH = 6;
+    private static final String PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE =
             "Длина пароля должна быть не менее " + MIN_PASSWORD_LENGTH + " символов!";
-    public static final UserDto USER_DTO = UserDto.builder()
+    private static final UserDto USER_DTO = UserDto.builder()
             .id(UUID.fromString(USER_ID))
             .account(new Account(UUID.fromString(USER_ID)))
             .build();
-    public static final String USER_EXIST_ERROR_MESSAGE = "Пользователь с таким именем уже существует!\n";
+    private static final String USER_EXIST_ERROR_MESSAGE = "Пользователь с таким именем уже существует!\n";
 
     private final ApplicationService applicationService = Mockito.mock(ApplicationService.class);
     private final State state = new RegistrationGetPasswordState(applicationService);

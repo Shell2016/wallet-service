@@ -8,9 +8,9 @@ import static org.mockito.Mockito.verify;
 
 class StartStateTest {
 
-    public static final String REGISTRATION_REQUEST = "2";
-    public static final String LOGIN_REQUEST = "1";
-    public static final String AUDIT_REQUEST = "getAudit";
+    private static final String REGISTRATION_REQUEST = "2";
+    private static final String LOGIN_REQUEST = "1";
+    private static final String AUDIT_REQUEST = "getAudit";
     private final ApplicationService applicationService = Mockito.mock(ApplicationService.class);
     private final State state = new StartState(applicationService);
 

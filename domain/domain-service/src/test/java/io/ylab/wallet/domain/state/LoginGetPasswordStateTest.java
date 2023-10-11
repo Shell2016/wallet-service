@@ -18,11 +18,11 @@ import static org.mockito.Mockito.when;
 
 class LoginGetPasswordStateTest {
 
-    public static final String USERNAME = "test1";
-    public static final String PASSWORD = "123456";
-    public static final String USER_ID = "0ff72a9a-a7a3-4c17-a25e-b5ef5215d528";
-    public static final String INVALID_CREDENTIALS_ERROR_MESSAGE = "Пользователя с такими именем и паролем не найдено!";
-    public static final UserDto USER_DTO = UserDto.builder()
+    private static final String USERNAME = "test1";
+    private static final String PASSWORD = "123456";
+    private static final String USER_ID = "0ff72a9a-a7a3-4c17-a25e-b5ef5215d528";
+    private static final String INVALID_CREDENTIALS_ERROR_MESSAGE = "Пользователя с такими именем и паролем не найдено!";
+    private static final UserDto USER_DTO = UserDto.builder()
             .id(UUID.fromString(USER_ID))
             .account(new Account(UUID.fromString(USER_ID)))
             .build();

@@ -41,7 +41,8 @@ public class ApplicationService {
 
     public ApplicationService(WalletController controller,
                               UserService userService,
-                              TransactionService transactionService, AuditService auditService) {
+                              TransactionService transactionService,
+                              AuditService auditService) {
         this.controller = controller;
         this.userService = userService;
         this.transactionService = transactionService;

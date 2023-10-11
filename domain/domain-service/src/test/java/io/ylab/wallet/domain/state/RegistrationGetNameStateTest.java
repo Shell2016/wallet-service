@@ -13,8 +13,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class RegistrationGetNameStateTest {
 
-    public static final String USERNAME = "test1";
-    public static final String USERNAME_EMPTY_ERROR_MESSAGE = "Поле имя не должно быть пустым!";
+    private static final String USERNAME = "test1";
+    private static final String USERNAME_EMPTY_ERROR_MESSAGE = "Поле имя не должно быть пустым!";
 
     private final ApplicationService applicationService = Mockito.mock(ApplicationService.class);
     private final State state = new RegistrationGetNameState(applicationService);

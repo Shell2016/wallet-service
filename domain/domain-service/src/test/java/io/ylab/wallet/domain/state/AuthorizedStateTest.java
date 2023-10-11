@@ -10,12 +10,12 @@ import static org.mockito.Mockito.verify;
 
 class AuthorizedStateTest {
 
-    public static final String USER_ID = "0ff72a9a-a7a3-4c17-a25e-b5ef5215d528";
-    public static final String VIEW_BALANCE_REQUEST = "1";
-    public static final String DEPOSIT_REQUEST = "2";
-    public static final String WITHDRAWAL_REQUEST = "3";
-    public static final String TRANSACTION_HISTORY_REQUEST = "4";
-    public static final String LOGOUT_REQUEST = "5";
+    private static final String USER_ID = "0ff72a9a-a7a3-4c17-a25e-b5ef5215d528";
+    private static final String VIEW_BALANCE_REQUEST = "1";
+    private static final String DEPOSIT_REQUEST = "2";
+    private static final String WITHDRAWAL_REQUEST = "3";
+    private static final String TRANSACTION_HISTORY_REQUEST = "4";
+    private static final String LOGOUT_REQUEST = "5";
     private final ApplicationService applicationService = Mockito.mock(ApplicationService.class);
     private final State state = new AuthorizedState(applicationService);
 
