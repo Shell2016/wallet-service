@@ -24,13 +24,10 @@ public class TransactionHistoryState extends State {
 
     /**
      * Exits on any user input.
-     * @return user input
      */
     @Override
-    public String processRequest() {
-        String input = app.getInput();
+    public void processInput(String input) {
         app.setState(AuthorizedState.class);
-        return input;
     }
 
     /**

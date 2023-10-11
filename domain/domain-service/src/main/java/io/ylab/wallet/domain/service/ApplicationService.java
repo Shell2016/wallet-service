@@ -90,14 +90,14 @@ public class ApplicationService {
     public void run() {
         while (true) {
             showMenu();
-            String input = null;
-            try {
-                input = processRequest();
-            } catch (DomainException e) {
-                System.out.println(e.getMessage());
-            }
+            String input = getInput();
             if (exitRequestReceived(input)) {
                 return;
+            }
+            try {
+                processInput(input);
+            } catch (DomainException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -114,8 +114,8 @@ public class ApplicationService {
      * Processes request and returns user input.
      * Transfers execution to current state.
      */
-    private String processRequest() {
-        return state.processRequest();
+    private void processInput(String input) {
+        state.processInput(input);
     }
 
     /**

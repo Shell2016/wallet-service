@@ -53,7 +53,7 @@ class ApplicationServiceTest {
     }
 
     @Test
-    void testConsoleOutput() {
+    void testConsole() {
         when(controller.getInput()).thenReturn("exit");
         applicationService.run();
         String printedOutput = outputStream.toString().trim();

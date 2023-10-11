@@ -32,15 +32,12 @@ public class WithdrawalState extends State {
 
     /**
      * Processes transaction request.
-     * @return user input
      */
     @Override
-    public String processRequest() {
-        String input = app.getInput();
+    public void processInput(String input) {
         if ("esc".equals(input)) {
             app.setState(AuthorizedState.class);
             app.audit("Transaction cancelled by user " + State.getContext());
-            return input;
         }
         Transaction transaction;
         try {
@@ -54,6 +51,5 @@ public class WithdrawalState extends State {
         }
         app.audit("Transaction success: " + transaction);
         app.setState(AuthorizedState.class);
-        return input;
     }
 }

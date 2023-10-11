@@ -30,11 +30,9 @@ public class AuthorizedState extends State {
 
     /**
      * Processes requests from authorized user.
-     * @return user input as string
      */
     @Override
-    public String processRequest() {
-        String input = app.getInput();
+    public void processInput(String input) {
         switch (input) {
             case "5" -> {
                 String userId = getContext();
@@ -61,6 +59,5 @@ public class AuthorizedState extends State {
             }
             default -> System.out.println("Неизвестная команда!\n");
         }
-        return input;
     }
 }

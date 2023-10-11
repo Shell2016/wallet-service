@@ -29,17 +29,15 @@ public class LoginGetNameState extends State {
 
     /**
      * Processing username.
-     * @return user input
      */
     @Override
-    public String processRequest() {
-        String userName = app.getInput().trim();
+    public void processInput(String input) {
+        String userName = input.trim();
         if (userName.isEmpty()) {
             app.audit("Login error: " + USERNAME_EMPTY_ERROR_MESSAGE);
             throw new ValidationException(USERNAME_EMPTY_ERROR_MESSAGE);
         }
         setContext(userName);
         app.setState(LoginGetPasswordState.class);
-        return userName;
     }
 }

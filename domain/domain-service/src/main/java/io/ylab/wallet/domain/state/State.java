@@ -28,7 +28,7 @@ public abstract class State {
      * This method is part of template method run() in ApplicationService class.
      * Must be implemented by concrete state classes.
      */
-    public abstract String processRequest();
+    public abstract void processInput(String input);
 
     /**
      * Clears context.
@@ -50,8 +50,7 @@ public abstract class State {
      * @return data that was stored between user inputs
      */
     public static String getContext() {
-        String context = CONTEXT.getContext();
-        return context;
+        return CONTEXT.getContext();
     }
 
     /**

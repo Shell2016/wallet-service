@@ -25,17 +25,15 @@ public class RegistrationGetNameState extends State {
 
     /**
      * Processing username.
-     * @return user input
      */
     @Override
-    public String processRequest() {
-        String userName = app.getInput().trim();
+    public void processInput(String input) {
+        String userName = input.trim();
         if (userName.isEmpty()) {
             app.audit("Registration error: " + EMPTY_STRING_ERROR_MESSAGE);
             throw new ValidationException(EMPTY_STRING_ERROR_MESSAGE);
         }
         setContext(userName);
         app.setState(RegistrationGetPasswordState.class);
-        return userName;
     }
 }

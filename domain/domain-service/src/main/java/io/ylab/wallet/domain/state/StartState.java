@@ -28,10 +28,8 @@ public class StartState extends State {
 
     /**
      * Processing user input.
-     * @return user input
      */
-    public String processRequest() {
-        String input = app.getInput();
+    public void processInput(String input) {
         if ("2".equals(input)) {
             app.setState(RegistrationGetNameState.class);
         } else if ("1".equals(input)) {
@@ -39,6 +37,5 @@ public class StartState extends State {
         } else if ("getAudit".equals(input)) {
             app.printAudit();
         }
-        return input;
     }
 }

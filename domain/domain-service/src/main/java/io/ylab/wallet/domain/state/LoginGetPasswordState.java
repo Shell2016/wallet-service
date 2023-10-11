@@ -9,7 +9,6 @@ import io.ylab.wallet.domain.service.ApplicationService;
  */
 public class LoginGetPasswordState extends State {
 
-    public static final String PASSWORD_MASK = "********";
     public static final String INVALID_CREDENTIALS_ERROR_MESSAGE = "Пользователя с такими именем и паролем не найдено!";
 
     public LoginGetPasswordState(ApplicationService app) {
@@ -26,15 +25,13 @@ public class LoginGetPasswordState extends State {
 
     /**
      * Processes username and password.
-     * @return password mask
      */
     @Override
-    public String processRequest() {
-        String password = app.getInput().trim();
+    public void processInput(String input) {
+        String password = input.trim();
         if ("esc".equals(password)) {
             app.setState(StartState.class);
             clearContext();
-            return PASSWORD_MASK;
         }
         String username = getContextAndClear();
         app.getUserIfValidCredentials(username, password).ifPresentOrElse(user -> {
@@ -49,6 +46,5 @@ public class LoginGetPasswordState extends State {
                     app.audit("Login error: " + INVALID_CREDENTIALS_ERROR_MESSAGE);
                     throw new InvalidCredentialsException(INVALID_CREDENTIALS_ERROR_MESSAGE);
                 });
-        return PASSWORD_MASK;
     }
 }
