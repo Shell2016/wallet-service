@@ -3,6 +3,7 @@ package io.ylab.wallet.domain.service;
 import io.ylab.wallet.domain.entity.*;
 import io.ylab.wallet.domain.exception.TransactionException;
 import io.ylab.wallet.domain.port.output.repository.TransactionRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@DisplayName("Transaction Service Test")
 class TransactionServiceTest {
 
     private static final String UUID_TRANSACTION1 = "adde1e02-1784-4973-956c-80d064309d55";
@@ -55,6 +57,7 @@ class TransactionServiceTest {
     private final TransactionService transactionService = new TransactionService(transactionRepository, userService);
 
     @Test
+    @DisplayName("transactionExists")
     void transactionExists() {
         when(transactionRepository.exists(UUID_TRANSACTION1)).thenReturn(true);
 
@@ -62,6 +65,7 @@ class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("getUserTransactions")
     void getUserTransactions() {
         when(transactionRepository.getAll())
                 .thenReturn(new ArrayList<>(List.of(TRANSACTION1_USER1, TRANSACTION2_USER1, TRANSACTION1_USER2)));
@@ -73,6 +77,7 @@ class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("Processing existed transaction should throw exception")
     void processTransactionIfAlreadyExistsThrowsException() {
         when(transactionRepository.exists(UUID_TRANSACTION1)).thenReturn(true);
 
@@ -84,6 +89,7 @@ class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("Processing not existed transaction should not throw exception")
     void processTransactionNotThrowsException() {
         when(transactionRepository.exists(UUID_TRANSACTION1)).thenReturn(false);
         when(userService.getUserById(any())).thenReturn(Optional.of(USER));
@@ -93,6 +99,7 @@ class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("processing successful transaction")
     void processTransactionSuccess() {
         when(transactionRepository.exists(UUID_TRANSACTION1)).thenReturn(false);
         when(userService.getUserById(any())).thenReturn(Optional.of(USER));

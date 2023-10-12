@@ -2,8 +2,7 @@ package io.ylab.wallet.domain;
 
 import io.ylab.wallet.domain.entity.Account;
 import io.ylab.wallet.domain.exception.BalanceValidationException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,6 +10,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
+@DisplayName("Account test")
 class AccountTest {
 
     private static final BigDecimal AMOUNT_10000 = BigDecimal.valueOf(10000);
@@ -23,11 +23,13 @@ class AccountTest {
     }
 
     @Test
+    @DisplayName("Check if new account balance is scaled zero")
     void checkIfNewAccountBalanceIsScaledZero() {
         assertThat(account.getBalance()).isEqualTo(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN));
     }
 
     @Test
+    @DisplayName("Validation should pass")
     void validateWithdrawalShouldPass() {
         account.deposit(AMOUNT_10000);
 
@@ -35,6 +37,7 @@ class AccountTest {
     }
 
     @Test
+    @DisplayName("Validation should fail")
     void validateWithdrawalShouldFail() {
          account.deposit(AMOUNT_10000);
 
@@ -44,6 +47,7 @@ class AccountTest {
     }
 
     @Test
+    @DisplayName("Test successful withdrawal")
     void checkWithdrawal() {
         account.deposit(AMOUNT_10000);
         account.withdraw(BigDecimal.valueOf(5000.01));
@@ -53,6 +57,7 @@ class AccountTest {
     }
 
     @Test
+    @DisplayName("Test deposit")
     void checkDeposit() {
         account.deposit(AMOUNT_10000);
         account.deposit(AMOUNT_10000);

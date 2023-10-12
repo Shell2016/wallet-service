@@ -30,6 +30,6 @@ public class AuditService {
      * @return list of audits
      */
     public List<AuditItem> getAuditInfo() {
-        return auditRepository.getAuditInfo();
+        return auditRepository.getAuditItems();
     }
 }

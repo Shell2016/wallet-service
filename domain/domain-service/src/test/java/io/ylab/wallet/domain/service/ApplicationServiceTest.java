@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+@DisplayName("Application Service Test")
 class ApplicationServiceTest {
 
     private static final String EXPECTED_OUTPUT = """
@@ -42,17 +43,20 @@ class ApplicationServiceTest {
     }
 
     @Test
+    @DisplayName("state initialization")
     void testStateInitialization() {
         assertThat(applicationService.getState()).isInstanceOf(StartState.class);
     }
 
     @Test
+    @DisplayName("setState")
     void testSetState() {
         applicationService.setState(AuthorizedState.class);
         assertThat(applicationService.getState()).isInstanceOf(AuthorizedState.class);
     }
 
     @Test
+    @DisplayName("check console output")
     void testConsole() {
         when(controller.getInput()).thenReturn("exit");
         applicationService.run();

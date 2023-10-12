@@ -12,7 +12,6 @@ class TransactionUtilsTest {
     private static final String VALID_INPUT = "737e3e32-a482-41b8-bcd5-ea92fe12325d 500";
     private static final String UUID = "737e3e32-a482-41b8-bcd5-ea92fe12325d";
     private static final String AMOUNT = "500";
-
     private static final String VALIDATION_EXCEPTION_MESSAGE = "Неверный формат!";
 
     @Test

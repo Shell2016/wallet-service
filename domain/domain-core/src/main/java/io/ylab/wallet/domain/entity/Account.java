@@ -1,11 +1,13 @@
 package io.ylab.wallet.domain.entity;
 
 import io.ylab.wallet.domain.exception.BalanceValidationException;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.UUID;
 
+@Getter
 public class Account {
 
     private final UUID userId;
@@ -14,10 +16,6 @@ public class Account {
 
     public Account(UUID userId) {
         this.userId = userId;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
     }
 
     public BigDecimal deposit(BigDecimal amount) {

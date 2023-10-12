@@ -32,7 +32,7 @@ class InMemoryAuditRepositoryTest {
         repository.addAuditItem(AUDIT_ITEM);
         repository.addAuditItem(AUDIT_ITEM);
 
-        List<AuditItem> auditItems = repository.getAuditInfo();
+        List<AuditItem> auditItems = repository.getAuditItems();
         assertThat(auditItems).hasSize(2);
         auditItems.forEach(item -> assertThat(item).isEqualTo(AUDIT_ITEM));
     }

@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface AuditRepository {
     void addAuditItem(AuditItem auditItem);
-    List<AuditItem> getAuditInfo();
+    List<AuditItem> getAuditItems();
 }

@@ -10,7 +10,7 @@ import java.util.*;
 public class InMemoryAuditStorage {
     private static final List<AuditItem> auditStorage = new ArrayList<>();
 
-    public List<AuditItem> getAuditInfo() {
+    public List<AuditItem> getAuditItems() {
         return auditStorage;
     }
 

@@ -31,7 +31,7 @@ public class InMemoryAuditRepository implements AuditRepository {
      * Get list of all auditItems.
      * @return list of all audit items
      */
-    public List<AuditItem> getAuditInfo() {
-        return storage.getAuditInfo();
+    public List<AuditItem> getAuditItems() {
+        return storage.getAuditItems();
     }
 }
