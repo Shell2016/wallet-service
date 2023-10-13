@@ -20,11 +20,15 @@ public class TransactionService {
     /**
      * Injection of repository to persist transaction data.
      */
-    private final TransactionRepository repository;
+    private final TransactionRepository transactionRepository;
     /**
      * Injection of service that contains user business logic.
      */
     private final UserService userService;
+    /**
+     * Injection of service that contains account business logic.
+     */
+    private final AccountService accountService;
 
     /**
      * Generates random UUID
@@ -40,7 +44,7 @@ public class TransactionService {
      * @return true if transaction exists in database
      */
     public boolean transactionExists(String id) {
-        return repository.exists(id);
+        return transactionRepository.exists(id);
     }
 
     /**
@@ -48,10 +52,8 @@ public class TransactionService {
      * @param userId of current user
      * @return list of current user's transactions
      */
-    public List<Transaction> getUserTransactions(String userId) {
-        return repository.getAll().stream()
-                .filter(transaction -> transaction.getUserId().toString().equals(userId))
-                .toList();
+    public List<Transaction> getUserTransactions(long userId) {
+        return transactionRepository.getAllByUserId(userId);
     }
 
     /**
@@ -63,7 +65,7 @@ public class TransactionService {
      * @return Transaction
      */
     public Transaction processTransaction(String transactionId,
-                                      String userId,
+                                      long userId,
                                       TransactionType type,
                                       String amount) {
         if (transactionExists(transactionId)) {
@@ -78,8 +80,11 @@ public class TransactionService {
         } else if (TransactionType.WITHDRAW == type) {
             account.withdraw(new BigDecimal(amount));
         }
-        userService.updateUser(user);
-        return saveTransaction(transactionId, userId, type, amount);
+        Transaction transaction = null;
+        if (accountService.updateAccountBalance(account)) {
+            transaction = saveTransaction(transactionId, userId, type, amount);
+        }
+        return transaction;
     }
 
     /**
@@ -91,12 +96,12 @@ public class TransactionService {
      * @return Transaction
      */
     private Transaction saveTransaction(String transactionId,
-                                        String userId,
+                                        long userId,
                                         TransactionType type,
                                         String amount) {
-        Transaction transaction = repository.save(Transaction.builder()
+        Transaction transaction = transactionRepository.save(Transaction.builder()
                 .id(UUID.fromString(transactionId))
-                .userId(UUID.fromString(userId))
+                .userId(userId)
                 .type(type)
                 .amount(new BigDecimal(amount))
                 .createdAt(LocalDateTime.now())

@@ -1,7 +1,7 @@
 package io.ylab.wallet.domain.state;
 
 
-import io.ylab.wallet.domain.dto.UserDto;
+import io.ylab.wallet.domain.dto.UserResponse;
 import io.ylab.wallet.domain.exception.ResourceProcessingException;
 import io.ylab.wallet.domain.exception.ValidationException;
 import io.ylab.wallet.domain.service.ApplicationService;
@@ -42,17 +42,17 @@ public class RegistrationGetPasswordState extends State {
             throw new ValidationException(PASSWORD_LENGTH_VALIDATION_ERROR_MESSAGE);
         }
         String username = getContextAndClear();
-        UserDto user;
+        UserResponse userResponse;
         try {
-            user = app.createUser(username, password);
-        } catch (ResourceProcessingException e) {
+            userResponse = app.createUser(username, password);
+        } catch (Exception e) {
             app.audit("Registration error: userName=" + username + e.getMessage());
             app.setState(StartState.class);
             clearContext();
-            throw e;
+            throw new ResourceProcessingException(e.getMessage());
         }
-        setContext(user.id().toString());
+        setContext(Long.toString(userResponse.id()));
         app.setState(AuthorizedState.class);
-        app.audit("Successful registration: userName=" + username + ", id=" + user.id());
+        app.audit("Successful registration: userName=" + username + ", id=" + userResponse.id());
     }
 }

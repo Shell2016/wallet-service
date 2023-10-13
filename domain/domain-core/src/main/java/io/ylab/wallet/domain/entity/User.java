@@ -1,29 +1,21 @@
 package io.ylab.wallet.domain.entity;
 
-import lombok.Getter;
-
-import java.util.UUID;
+import lombok.*;
 
 /**
  * User entity.
  */
 @Getter
+@Setter
+@Builder
 public class User {
-    private final UUID id;
+    private long id;
     private final String username;
     private final String password;
     /**
-     * Account of the user.
-     * Initialized via constructor phase with userId.
+     * AccountId of the user.
      */
-    private final Account account;
-
-    public User(UUID id, String username, String password) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.account = new Account(id);
-    }
+    private Account account;
 
     @Override
     public boolean equals(Object o) {
@@ -32,11 +24,11 @@ public class User {
 
         User user = (User) o;
 
-        return id.equals(user.id);
+        return id == user.id;
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return (int) (id ^ (id >>> 32));
     }
 }

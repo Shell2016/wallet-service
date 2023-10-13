@@ -34,7 +34,7 @@ public class TransactionHistoryState extends State {
      * Prints transaction history of current user.
      */
     private void printTransactionHistory() {
-        String userId = State.getContext();
+        long userId = Long.parseLong(State.getContext());
         app.getUserTransactions(userId).forEach(transaction -> {
             String id = transaction.getId().toString();
             String type = transaction.getType() == TransactionType.DEPOSIT ? "Пополнение" : "Снятие    ";

@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres_local
+    environment:
+      POSTGRES_DB: wallet
+      POSTGRES_USER: ylab
+      POSTGRES_PASSWORD: ylab
+    volumes:
+      - wallet_db:/var/lib/postgresql/data
+      - ./sql/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+volumes:
+  wallet_db:

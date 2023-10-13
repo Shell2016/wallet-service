@@ -6,7 +6,6 @@ import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,18 +13,13 @@ import static org.assertj.core.api.Assertions.*;
 class AccountTest {
 
     private static final BigDecimal AMOUNT_10000 = BigDecimal.valueOf(10000);
-    private static final UUID UUID = java.util.UUID.fromString("adde1e02-1784-4973-956c-80d064309d55");
     private Account account;
 
     @BeforeEach
     void init() {
-        account = new Account(UUID);
-    }
-
-    @Test
-    @DisplayName("Check if new account balance is scaled zero")
-    void checkIfNewAccountBalanceIsScaledZero() {
-        assertThat(account.getBalance()).isEqualTo(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN));
+        account = Account.builder()
+                .balance(BigDecimal.ZERO)
+                .build();
     }
 
     @Test

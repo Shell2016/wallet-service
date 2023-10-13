@@ -10,18 +10,19 @@ import static org.mockito.Mockito.verify;
 
 class AuthorizedStateTest {
 
-    private static final String USER_ID = "0ff72a9a-a7a3-4c17-a25e-b5ef5215d528";
+    private static final long USER_ID = 1L;
     private static final String VIEW_BALANCE_REQUEST = "1";
     private static final String DEPOSIT_REQUEST = "2";
     private static final String WITHDRAWAL_REQUEST = "3";
     private static final String TRANSACTION_HISTORY_REQUEST = "4";
     private static final String LOGOUT_REQUEST = "5";
+
     private final ApplicationService applicationService = Mockito.mock(ApplicationService.class);
     private final State state = new AuthorizedState(applicationService);
 
     @BeforeEach
     void init() {
-        State.setContext(USER_ID);
+        State.setContext(String.valueOf(USER_ID));
     }
 
     @Test

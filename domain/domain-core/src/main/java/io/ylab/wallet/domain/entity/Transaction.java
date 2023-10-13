@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 public class Transaction {
     private final UUID id;
-    private final UUID userId;
+    private final long userId;
     private BigDecimal amount;
     private final TransactionType type;
     private final LocalDateTime createdAt;

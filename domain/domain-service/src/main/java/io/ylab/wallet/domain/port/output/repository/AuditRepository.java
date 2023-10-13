@@ -9,6 +9,6 @@ import java.util.List;
  * Acts as output port in onion architecture.
  */
 public interface AuditRepository {
-    void addAuditItem(AuditItem auditItem);
+    void save(AuditItem auditItem);
     List<AuditItem> getAuditItems();
 }

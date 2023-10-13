@@ -12,4 +12,5 @@ public interface TransactionRepository {
     boolean exists(String id);
     Transaction save(Transaction transaction);
     List<Transaction> getAll();
+    List<Transaction> getAllByUserId(long userId);
 }

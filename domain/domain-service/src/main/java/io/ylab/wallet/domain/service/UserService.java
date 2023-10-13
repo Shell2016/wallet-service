@@ -1,15 +1,16 @@
 package io.ylab.wallet.domain.service;
 
 
-import io.ylab.wallet.domain.dto.UserDto;
+import io.ylab.wallet.domain.dto.UserResponse;
+import io.ylab.wallet.domain.entity.Account;
 import io.ylab.wallet.domain.entity.User;
 import io.ylab.wallet.domain.exception.ResourceProcessingException;
 import io.ylab.wallet.domain.mapper.UserMapper;
+import io.ylab.wallet.domain.port.output.repository.AccountRepository;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service with user business logic.
@@ -21,6 +22,7 @@ public class UserService {
      * Repository for persisting user data.
      */
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     /**
      * For mapping User to dtos and vice versa.
      */
@@ -32,14 +34,17 @@ public class UserService {
      * @param password of new user
      * @return UserDto of created user
      */
-    public UserDto createUser(String username, String password) {
-        User user = new User(UUID.randomUUID() ,username, password);
+    public UserResponse createUser(String username, String password) {
+        User user = User.builder()
+                .username(username)
+                .password(password)
+                .build();
         if (userRepository.existsByUsername(username)) {
             throw new ResourceProcessingException("Пользователь с таким именем уже существует!\n");
         }
-        UserDto userDto = userMapper.userToUserDto(userRepository.save(user));
+        User savedUser = userRepository.save(user);
         System.out.println("Пользователь успешно создан!");
-        return userDto;
+        return userMapper.userToUserResponse(savedUser);
     }
 
     /**
@@ -48,36 +53,26 @@ public class UserService {
      * @param password to login
      * @return Optional of userDto if valid credentials, empty Optional otherwise.
      */
-    public Optional<UserDto> getUserDtoIfValidCredentials(String username, String password) {
+    public Optional<UserResponse> getUserResponseIfValidCredentials(String username, String password) {
         return userRepository.getByUsername(username)
                 .filter(user -> user.getPassword().equals(password))
-                .map(userMapper::userToUserDto);
+                .map(userMapper::userToUserResponse);
     }
 
     /**
-     * Gets current user's balance.
-     * @return account balance as string
-     */
-    public String getBalance(String id) {
-        return userRepository.getById(id)
-                .map(user -> user.getAccount().getBalance().toString())
-                .orElseThrow(() -> new ResourceProcessingException("Не удалось загрузить баланс!"));
-    }
-
-    /**
-     * Gets user.
+     * Gets user with account.
      * @param id of user that we want to get
      * @return Optional of User
      */
-    public Optional<User> getUserById(String id) {
-        return userRepository.getById(id);
-    }
-
-    /**
-     * Updates user.
-     * @param user to update
-     */
-    public void updateUser(User user) {
-        userRepository.save(user);
+    public Optional<User> getUserById(long id) {
+        Account account = accountRepository.getByUserId(id)
+                .orElseThrow(() -> new ResourceProcessingException("Не удалось загрузить аккаунт!"));
+        Optional<User> optionalUser = userRepository.getById(id);
+        if (optionalUser.isEmpty()) {
+            return Optional.empty();
+        }
+        User user = optionalUser.get();
+        user.setAccount(account);
+        return Optional.of(user);
     }
 }

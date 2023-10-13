@@ -34,11 +34,11 @@ public class LoginGetPasswordState extends State {
             clearContext();
         }
         String username = getContextAndClear();
-        app.getUserIfValidCredentials(username, password).ifPresentOrElse(user -> {
-                    setContext(user.id().toString());
+        app.getUserResponseIfValidCredentials(username, password).ifPresentOrElse(user -> {
+                    setContext(Long.toString(user.id()));
                     app.setState(AuthorizedState.class);
                     System.out.println("Успешная авторизация!\n");
-                    app.audit("Successful login: username=" + username + ", userId=" + user.id());
+                    app.audit("Successful login: username=" + user.username() + ", userId=" + user.id());
                 },
                 () -> {
                     clearContext();
