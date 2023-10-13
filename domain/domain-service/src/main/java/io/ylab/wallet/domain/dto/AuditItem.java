@@ -1,7 +1,6 @@
 package io.ylab.wallet.domain.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -10,15 +9,9 @@ import java.time.LocalDateTime;
  */
 @Builder
 @Getter
+@ToString
 public class AuditItem {
-    private LocalDateTime time;
+    private long id;
+    private LocalDateTime createdAt;
     private String info;
-
-    @Override
-    public String toString() {
-        return "{" +
-                "time=" + time +
-                ", info='" + info + '\'' +
-                '}';
-    }
 }

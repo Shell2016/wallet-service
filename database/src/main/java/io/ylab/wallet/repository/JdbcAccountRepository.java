@@ -1,0 +1,83 @@
+package io.ylab.wallet.repository;
+
+import io.ylab.wallet.config.ConnectionManager;
+import io.ylab.wallet.entity.AccountEntity;
+import io.ylab.wallet.exception.DatabaseException;
+
+import java.sql.*;
+import java.util.Optional;
+
+/**
+ * Manipulates account data via JDBC connection.
+ */
+public class JdbcAccountRepository {
+
+    public AccountEntity save(AccountEntity account) {
+        try (Connection connection = ConnectionManager.open()) {
+            account =  save(account, connection);
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+        return account;
+    }
+
+    public AccountEntity save(AccountEntity account, Connection connection) throws SQLException {
+        String createAccountSql = """
+                INSERT INTO wallet.account (user_id, balance) VALUES (?, ?)
+                """;
+        long accountId;
+        try (PreparedStatement createAccountStatement =
+                     connection.prepareStatement(createAccountSql, Statement.RETURN_GENERATED_KEYS)) {
+            createAccountStatement.setLong(1, account.getUser().getId());
+            createAccountStatement.setBigDecimal(2, account.getBalance());
+            createAccountStatement.executeUpdate();
+            ResultSet generatedKeys = createAccountStatement.getGeneratedKeys();
+            generatedKeys.next();
+            accountId = generatedKeys.getLong("id");
+        }
+        account.setId(accountId);
+        return account;
+    }
+
+    public boolean updateBalance(AccountEntity account) {
+        String sql = """
+                UPDATE wallet.account 
+                SET balance = ? 
+                WHERE id = ?
+                """;
+        try (Connection connection = ConnectionManager.open();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setBigDecimal(1, account.getBalance());
+            preparedStatement.setLong(2, account.getId());
+            if (preparedStatement.executeUpdate() == 1) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+        return false;
+    }
+
+    public Optional<AccountEntity> getByUserId(long userId) {
+        String sql = """
+                SELECT id, balance FROM wallet.account where user_id = ?
+                """;
+        AccountEntity account = null;
+        try (Connection connection = ConnectionManager.open();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setLong(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                account = AccountEntity.builder()
+                        .id(resultSet.getLong("id"))
+                        .balance(resultSet.getBigDecimal("balance"))
+                        .build();
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+        return Optional.ofNullable(account);
+    }
+}

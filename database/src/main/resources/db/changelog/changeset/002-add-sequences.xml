@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="Mikhail Sheludyakov">
+        <createSequence schemaName="wallet" sequenceName="users_id_seq"/>
+    </changeSet>
+    <changeSet id="2" author="Mikhail Sheludyakov">
+        <createSequence schemaName="wallet" sequenceName="account_id_seq"/>
+    </changeSet>
+    <changeSet id="3" author="Mikhail Sheludyakov">
+        <createSequence schemaName="wallet" sequenceName="audit_id_seq"/>
+    </changeSet>
+    <changeSet id="4" author="Mikhail Sheludyakov">
+        <sql>
+            ALTER TABLE wallet.users ALTER COLUMN id SET DEFAULT nextval('wallet.users_id_seq');
+        </sql>
+    </changeSet>
+    <changeSet id="5" author="Mikhail Sheludyakov">
+        <sql>
+            ALTER TABLE wallet.account ALTER COLUMN id SET DEFAULT nextval('wallet.account_id_seq');
+        </sql>
+    </changeSet>
+    <changeSet id="6" author="Mikhail Sheludyakov">
+        <sql>
+            ALTER TABLE wallet.audit ALTER COLUMN id SET DEFAULT nextval('wallet.audit_id_seq');
+        </sql>
+    </changeSet>
+</databaseChangeLog>

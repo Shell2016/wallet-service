@@ -25,15 +25,16 @@ class ApplicationServiceTest {
     private final UserService userService = Mockito.mock(UserService.class);
     private final TransactionService transactionService = Mockito.mock(TransactionService.class);
     private final AuditService auditService = Mockito.mock(AuditService.class);
-
-    private ApplicationService applicationService;
+    private final AccountService accountService = Mockito.mock(AccountService.class);
 
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
 
+    private final ApplicationService applicationService =
+            new ApplicationService(controller, userService, accountService, transactionService, auditService);
+
     @BeforeEach
     void init() {
-        applicationService = new ApplicationService(controller, userService, transactionService, auditService);
         System.setOut(new PrintStream(outputStream));
     }
 

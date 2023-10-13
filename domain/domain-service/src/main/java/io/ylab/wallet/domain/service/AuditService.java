@@ -19,8 +19,8 @@ public class AuditService {
     private final AuditRepository auditRepository;
 
     public void audit(String info) {
-        auditRepository.addAuditItem(AuditItem.builder()
-                .time(LocalDateTime.now())
+        auditRepository.save(AuditItem.builder()
+                .createdAt(LocalDateTime.now())
                 .info(info)
                 .build());
     }

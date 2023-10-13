@@ -15,14 +15,14 @@ import static org.mockito.Mockito.*;
 
 class DepositStateTest {
 
-    private static final String USER_ID = "0ff72a9a-a7a3-4c17-a25e-b5ef5215d528";
+    private static final long USER_ID = 1L;
     private static final String ESC = "esc";
     private static final String TRANSACTION_INPUT = "7272c49b-3736-4819-9159-222de2021ed3 1000";
     private static final String AMOUNT = "1000";
     private static final String TRANSACTION_ID = "7272c49b-3736-4819-9159-222de2021ed3";
     private static final Transaction TRANSACTION = Transaction.builder()
             .id(UUID.fromString(TRANSACTION_ID))
-            .userId(UUID.fromString(USER_ID))
+            .userId(USER_ID)
             .amount(new BigDecimal(AMOUNT))
             .type(TransactionType.DEPOSIT)
             .createdAt(LocalDateTime.of(2023, 10, 11 , 13, 0))
@@ -32,7 +32,7 @@ class DepositStateTest {
 
     @BeforeEach
     void init() {
-        State.setContext(USER_ID);
+        State.setContext(String.valueOf(USER_ID));
     }
 
     @Test

@@ -1,7 +1,8 @@
 package io.ylab.wallet.domain.service;
 
-import io.ylab.wallet.domain.dto.UserDto;
-import io.ylab.wallet.domain.entity.*;
+import io.ylab.wallet.domain.dto.UserResponse;
+import io.ylab.wallet.domain.entity.Transaction;
+import io.ylab.wallet.domain.entity.TransactionType;
 import io.ylab.wallet.domain.exception.DomainException;
 import io.ylab.wallet.domain.port.input.controller.WalletController;
 import io.ylab.wallet.domain.state.*;
@@ -26,6 +27,7 @@ public class ApplicationService {
      * Service that have user business logic.
      */
     private final UserService userService;
+    private final AccountService accountService;
     /**
      * Service that have transaction business logic.
      */
@@ -41,10 +43,12 @@ public class ApplicationService {
 
     public ApplicationService(WalletController controller,
                               UserService userService,
+                              AccountService accountService,
                               TransactionService transactionService,
                               AuditService auditService) {
         this.controller = controller;
         this.userService = userService;
+        this.accountService = accountService;
         this.transactionService = transactionService;
         this.auditService = auditService;
         initializeStates();
@@ -140,20 +144,20 @@ public class ApplicationService {
      * Creates user.
      * @param username must be not empty
      * @param password length must be >= 6
-     * @return UserDto of created user
+     * @return UserResponse of created user
      */
-    public UserDto createUser(String username, String password) {
+    public UserResponse createUser(String username, String password) {
         return userService.createUser(username, password);
     }
 
     /**
-     * Gets userDto if valid credentials.
+     * Gets UserResponse if valid credentials.
      * @param username to login
      * @param password to login
-     * @return Optional of userDto if valid credentials, empty Optional otherwise.
+     * @return Optional of userResponse if valid credentials, empty Optional otherwise.
      */
-    public Optional<UserDto> getUserIfValidCredentials(String username, String password) {
-        return userService.getUserDtoIfValidCredentials(username, password);
+    public Optional<UserResponse> getUserResponseIfValidCredentials(String username, String password) {
+        return userService.getUserResponseIfValidCredentials(username, password);
     }
 
     /**
@@ -161,8 +165,8 @@ public class ApplicationService {
      * @return account balance
      */
     public String getBalance() {
-        String userId = State.getContext();
-        return userService.getBalance(userId);
+        long userId = Long.parseLong(State.getContext());
+        return accountService.getBalance(userId);
     }
 
     /**
@@ -181,7 +185,7 @@ public class ApplicationService {
      * @return Transaction
      */
     public Transaction processTransaction(String transactionId, TransactionType type, String amount) {
-        String userId = State.getContext();
+        long userId = Long.parseLong(State.getContext());
         return transactionService.processTransaction(transactionId, userId, type, amount);
     }
 
@@ -190,7 +194,7 @@ public class ApplicationService {
      * @param userId of current user
      * @return list of transactions
      */
-    public List<Transaction> getUserTransactions(String userId) {
+    public List<Transaction> getUserTransactions(long userId) {
         return transactionService.getUserTransactions(userId);
     }
 
@@ -206,6 +210,7 @@ public class ApplicationService {
      * Prints audit logs to console.
      */
     public void printAudit() {
-        auditService.getAuditInfo().forEach(System.out::println);
+        auditService.getAuditInfo().forEach(auditItem ->
+                System.out.println(auditItem.getCreatedAt() + "  " +  auditItem.getInfo()));
     }
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="Mikhail Sheludyakov">
+        <insert schemaName="wallet" tableName="users">
+            <column name="username" value="user1"/>
+            <column name="password" value="123456"/>
+        </insert>
+        <insert schemaName="wallet" tableName="users">
+            <column name="username" value="user2"/>
+            <column name="password" value="123456"/>
+        </insert>
+        <insert schemaName="wallet" tableName="users">
+            <column name="username" value="user3"/>
+            <column name="password" value="123456"/>
+        </insert>
+    </changeSet>
+    <changeSet id="2" author="Mikhail Sheludyakov">
+        <insert schemaName="wallet" tableName="account">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="balance" valueNumeric="0"/>
+        </insert>
+        <insert schemaName="wallet" tableName="account">
+            <column name="user_id" valueNumeric="2"/>
+            <column name="balance" valueNumeric="500"/>
+        </insert>
+        <insert schemaName="wallet" tableName="account">
+            <column name="user_id" valueNumeric="3"/>
+            <column name="balance" valueNumeric="1000"/>
+        </insert>
+    </changeSet>
+    <changeSet id="3" author="Mikhail Sheludyakov">
+        <insert schemaName="wallet" tableName="transaction">
+            <column name="id" value="5400ed4c-c5b7-446a-af44-2940a4c40e90"/>
+            <column name="user_id" valueNumeric="2"/>
+            <column name="amount" valueNumeric="500"/>
+            <column name="type" value="DEPOSIT"/>
+            <column name="created_at" valueDate="2023-10-15 15:38:09.207534"/>
+        </insert>
+        <insert schemaName="wallet" tableName="transaction">
+            <column name="id" value="72d128cc-e317-405f-af55-be22cfd814b1"/>
+            <column name="user_id" valueNumeric="3"/>
+            <column name="amount" valueNumeric="1000"/>
+            <column name="type" value="DEPOSIT"/>
+            <column name="created_at" valueDate="2023-10-15 15:38:09.207534"/>
+        </insert>
+    </changeSet>
+    <changeSet id="4" author="Mikhail Sheludyakov">
+        <insert schemaName="wallet" tableName="audit">
+            <column name="info" value="Test audit1"/>
+            <column name="created_at" valueDate="2023-10-15 15:37:42.785566"/>
+        </insert>
+        <insert schemaName="wallet" tableName="audit">
+            <column name="info" value="Test audit2"/>
+            <column name="created_at" valueDate="2023-10-15 15:37:42.785566"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

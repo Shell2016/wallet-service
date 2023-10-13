@@ -1,21 +1,25 @@
 package io.ylab.wallet.domain.entity;
 
 import io.ylab.wallet.domain.exception.BalanceValidationException;
-import lombok.Getter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.UUID;
 
 @Getter
+@Builder
 public class Account {
 
-    private final UUID userId;
+    private final long id;
+    /**
+     * Id of the owner of the account.
+     */
+    private final User user;
 
-    private BigDecimal balance = setScale(BigDecimal.ZERO);
+    private BigDecimal balance;
 
-    public Account(UUID userId) {
-        this.userId = userId;
+    public void setBalance(BigDecimal balance) {
+        this.balance = setScale(balance);
     }
 
     public BigDecimal deposit(BigDecimal amount) {
@@ -52,14 +56,11 @@ public class Account {
 
         Account account = (Account) o;
 
-        if (!userId.equals(account.userId)) return false;
-        return balance.equals(account.balance);
+        return id == account.id;
     }
 
     @Override
     public int hashCode() {
-        int result = userId.hashCode();
-        result = 31 * result + balance.hashCode();
-        return result;
+        return (int) (id ^ (id >>> 32));
     }
 }
