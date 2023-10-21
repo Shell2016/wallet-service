@@ -14,15 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>io.ylab.wallet</groupId>
-            <artifactId>domain-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.ylab.wallet</groupId>
             <artifactId>database</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.ylab.wallet</groupId>
-            <artifactId>in</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,10 +1,14 @@
 package io.ylab.wallet.domain.service;
 
+import io.ylab.wallet.domain.dto.TransactionDto;
+import io.ylab.wallet.domain.dto.TransactionRequest;
 import io.ylab.wallet.domain.entity.*;
 import io.ylab.wallet.domain.exception.TransactionException;
 import io.ylab.wallet.domain.exception.UserNotFoundException;
+import io.ylab.wallet.domain.mapper.TransactionMapper;
 import io.ylab.wallet.domain.port.output.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,17 +33,14 @@ public class TransactionService {
      * Injection of service that contains account business logic.
      */
     private final AccountService accountService;
-
     /**
-     * Generates random UUID
-     * @return new UUID as string
+     * Mapper for mapping transaction dtos.
      */
-    public String generateId() {
-        return UUID.randomUUID().toString();
-    }
+    private final TransactionMapper transactionMapper = Mappers.getMapper(TransactionMapper.class);
 
     /**
      * Checks if transaction with given id already exists.
+     *
      * @param id of transaction to check
      * @return true if transaction exists in database
      */
@@ -49,50 +50,54 @@ public class TransactionService {
 
     /**
      * Gets list of current user's transactions.
+     *
      * @param userId of current user
      * @return list of current user's transactions
      */
-    public List<Transaction> getUserTransactions(long userId) {
-        return transactionRepository.getAllByUserId(userId);
+    public List<TransactionDto> getUserTransactions(long userId) {
+        return transactionRepository.getAllByUserId(userId).stream()
+                .map(transactionMapper::map)
+                .toList();
     }
 
     /**
      * Processes transaction.
-     * @param transactionId of new transaction
-     * @param userId of current user
-     * @param type of transaction (deposit/withdraw)
-     * @param amount of money
-     * @return Transaction
+     *
+     * @param request transactionRequest with id, type and amount fields
+     * @param userId  of corresponding user
+     * @return Transaction entity
      */
-    public Transaction processTransaction(String transactionId,
-                                      long userId,
-                                      TransactionType type,
-                                      String amount) {
-        if (transactionExists(transactionId)) {
-            throw new TransactionException("Транзакция с id=" + transactionId + " уже зарегистрирована в системе!\n" +
-                    "Операция отклонена!");
+    public TransactionDto processTransaction(TransactionRequest request, long userId) {
+        if (transactionExists(request.id())) {
+            throw new TransactionException("Транзакция с id=" + request.id() + " уже зарегистрирована в системе!\n" +
+                                           "Операция отклонена!");
         }
         User user = userService.getUserById(userId).orElseThrow(
                 () -> new UserNotFoundException("Пользователь не найден!"));
         Account account = user.getAccount();
-        if (TransactionType.DEPOSIT == type) {
-            account.deposit(new BigDecimal(amount));
-        } else if (TransactionType.WITHDRAW == type) {
-            account.withdraw(new BigDecimal(amount));
+        if (TransactionType.DEPOSIT.name().equalsIgnoreCase(request.type())) {
+            account.deposit(new BigDecimal(request.amount()));
+        } else if (TransactionType.WITHDRAW.name().equalsIgnoreCase(request.type())) {
+            account.withdraw(new BigDecimal(request.amount()));
         }
         Transaction transaction = null;
         if (accountService.updateAccountBalance(account)) {
-            transaction = saveTransaction(transactionId, userId, type, amount);
+            transaction = saveTransaction(
+                    request.id(),
+                    userId,
+                    TransactionType.valueOf(request.type().toUpperCase()),
+                    request.amount());
         }
-        return transaction;
+        return transactionMapper.map(transaction);
     }
 
     /**
      * Saves transaction.
+     *
      * @param transactionId of new transaction
-     * @param userId of current user
-     * @param type of transaction (deposit/withdraw)
-     * @param amount of money
+     * @param userId        of current user
+     * @param type          of transaction (deposit/withdraw)
+     * @param amount        of money
      * @return Transaction
      */
     private Transaction saveTransaction(String transactionId,
