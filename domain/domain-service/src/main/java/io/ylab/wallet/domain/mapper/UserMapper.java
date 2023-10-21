@@ -1,25 +1,20 @@
 package io.ylab.wallet.domain.mapper;
 
-
-import io.ylab.wallet.domain.dto.*;
+import io.ylab.wallet.domain.dto.UserRequest;
+import io.ylab.wallet.domain.dto.UserResponse;
 import io.ylab.wallet.domain.entity.User;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
- * Mapper for mapping User to dtos and vice versa.
+ * Mapper for user-dto mappings.
  */
-public class UserMapper {
+@Mapper
+public interface UserMapper {
 
-    public User userCreateRequestToUser(UserCreateRequest request) {
-        return User.builder()
-                .username(request.username())
-                .password(request.password())
-                .build();
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "account", ignore = true)
+    User userCreateRequestToUser(UserRequest userRequest);
 
-    public UserResponse userToUserResponse(User user) {
-        return UserResponse.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .build();
-    }
+    UserResponse userToUserResponse(User user);
 }

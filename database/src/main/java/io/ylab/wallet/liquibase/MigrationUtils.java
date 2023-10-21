@@ -1,7 +1,7 @@
 package io.ylab.wallet.liquibase;
 
-import io.ylab.wallet.config.ConnectionManager;
-import io.ylab.wallet.config.PropertiesUtils;
+import io.ylab.wallet.connection.ConnectionManager;
+import io.ylab.wallet.domain.config.PropertiesUtils;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;

@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+
+  wallet-postgres:
+    image: postgres:16-alpine
+    container_name: postgres_local
+    environment:
+      POSTGRES_DB: wallet
+      POSTGRES_USER: ylab
+      POSTGRES_PASSWORD: ylab
+    volumes:
+      - wallet_db:/var/lib/postgresql/data
+      - ./sql/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 3s
+      timeout: 2s
+      retries: 5
+    restart: unless-stopped
+
+  wallet-migration-service:
+    build:
+      context: ./application
+    environment:
+      DB_HOST: wallet-postgres
+    depends_on:
+      wallet-postgres:
+        condition: service_healthy
+
+volumes:
+  wallet_db:

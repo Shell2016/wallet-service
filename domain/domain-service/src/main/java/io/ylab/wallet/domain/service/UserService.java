@@ -1,6 +1,7 @@
 package io.ylab.wallet.domain.service;
 
 
+import io.ylab.wallet.domain.dto.UserRequest;
 import io.ylab.wallet.domain.dto.UserResponse;
 import io.ylab.wallet.domain.entity.Account;
 import io.ylab.wallet.domain.entity.User;
@@ -9,6 +10,8 @@ import io.ylab.wallet.domain.mapper.UserMapper;
 import io.ylab.wallet.domain.port.output.repository.AccountRepository;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
 
@@ -26,22 +29,20 @@ public class UserService {
     /**
      * For mapping User to dtos and vice versa.
      */
-    private final UserMapper userMapper;
+    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     /**
-     * Creates new user.
-     * @param username of new user
-     * @param password of new user
-     * @return UserDto of created user
+     * Creates user.
+     *
+     * @param userRequest
+     * @return userResponse
      */
-    public UserResponse createUser(String username, String password) {
-        User user = User.builder()
-                .username(username)
-                .password(password)
-                .build();
-        if (userRepository.existsByUsername(username)) {
-            throw new ResourceProcessingException("Пользователь с таким именем уже существует!\n");
+    public UserResponse createUser(UserRequest userRequest) {
+        if (userRepository.existsByUsername(userRequest.username())) {
+            throw new ResourceProcessingException("Пользователь с таким именем уже существует!");
         }
+        User user = userMapper.userCreateRequestToUser(userRequest);
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         User savedUser = userRepository.save(user);
         System.out.println("Пользователь успешно создан!");
         return userMapper.userToUserResponse(savedUser);
@@ -49,6 +50,7 @@ public class UserService {
 
     /**
      * Gets userDto if valid credentials.
+     *
      * @param username to login
      * @param password to login
      * @return Optional of userDto if valid credentials, empty Optional otherwise.
@@ -61,6 +63,7 @@ public class UserService {
 
     /**
      * Gets user with account.
+     *
      * @param id of user that we want to get
      * @return Optional of User
      */

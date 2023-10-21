@@ -1,5 +1,7 @@
 package io.ylab.wallet.domain.service;
 
+import io.ylab.wallet.domain.dto.TransactionDto;
+import io.ylab.wallet.domain.dto.TransactionRequest;
 import io.ylab.wallet.domain.entity.*;
 import io.ylab.wallet.domain.exception.TransactionException;
 import io.ylab.wallet.domain.port.output.repository.TransactionRepository;
@@ -22,12 +24,12 @@ class TransactionServiceTest {
 
     private static final String UUID_TRANSACTION1 = "adde1e02-1784-4973-956c-80d064309d55";
     private static final String UUID_TRANSACTION2 = "adde1e02-1784-4973-956c-80d064309d56";
-    private static final String UUID_TRANSACTION3 = "adde1e02-1784-4973-956c-80d064309d57";
     private static final long USER_1_ID = 1L;
-    private static final long USER_2_ID = 2L;
     private static final BigDecimal AMOUNT = BigDecimal.valueOf(10000);
     private static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(
             2023, 10, 9, 12, 0);
+    private static final TransactionRequest TRANSACTION_REQUEST =
+            new TransactionRequest(UUID_TRANSACTION1, "deposit", AMOUNT.toString());
     private static final Transaction TRANSACTION1_USER1 = Transaction.builder()
             .id(UUID.fromString(UUID_TRANSACTION1))
             .userId(USER_1_ID)
@@ -36,6 +38,20 @@ class TransactionServiceTest {
             .type(TransactionType.DEPOSIT)
             .build();
     private static final Transaction TRANSACTION2_USER1 = Transaction.builder()
+            .id(UUID.fromString(UUID_TRANSACTION2))
+            .userId(USER_1_ID)
+            .amount(AMOUNT)
+            .createdAt(LOCAL_DATE_TIME)
+            .type(TransactionType.DEPOSIT)
+            .build();
+    private static final TransactionDto TRANSACTION1_USER1_DTO = TransactionDto.builder()
+            .id(UUID.fromString(UUID_TRANSACTION1))
+            .userId(USER_1_ID)
+            .amount(AMOUNT)
+            .createdAt(LOCAL_DATE_TIME)
+            .type(TransactionType.DEPOSIT)
+            .build();
+    private static final TransactionDto TRANSACTION2_USER1_DTO = TransactionDto.builder()
             .id(UUID.fromString(UUID_TRANSACTION2))
             .userId(USER_1_ID)
             .amount(AMOUNT)
@@ -74,10 +90,10 @@ class TransactionServiceTest {
         when(transactionRepository.getAllByUserId(USER_1_ID))
                 .thenReturn(new ArrayList<>(List.of(TRANSACTION1_USER1, TRANSACTION2_USER1)));
 
-        List<Transaction> transactions = transactionService.getUserTransactions(USER_1_ID);
+        List<TransactionDto> transactions = transactionService.getUserTransactions(USER_1_ID);
         assertThat(transactions)
                 .hasSize(2)
-                .containsExactly(TRANSACTION1_USER1, TRANSACTION2_USER1);
+                .containsExactly(TRANSACTION1_USER1_DTO, TRANSACTION2_USER1_DTO);
     }
 
     @Test
@@ -86,7 +102,7 @@ class TransactionServiceTest {
         when(transactionRepository.exists(UUID_TRANSACTION1)).thenReturn(true);
 
         assertThatThrownBy(() -> transactionService
-                .processTransaction(UUID_TRANSACTION1, USER_1_ID, TransactionType.DEPOSIT, AMOUNT.toString()))
+                .processTransaction(TRANSACTION_REQUEST, USER_1_ID))
                 .isInstanceOf(TransactionException.class)
                 .hasMessage(TRANSACTION_EXISTS_ERROR_MESSAGE)
                 .hasNoCause();
@@ -99,7 +115,7 @@ class TransactionServiceTest {
         when(userService.getUserById(anyLong())).thenReturn(Optional.of(USER));
 
         Assertions.assertThatNoException().isThrownBy(() -> transactionService
-                .processTransaction(UUID_TRANSACTION1, USER_1_ID, TransactionType.DEPOSIT, AMOUNT.toString()));
+                .processTransaction(TRANSACTION_REQUEST, USER_1_ID));
     }
 
     @Test
@@ -110,9 +126,9 @@ class TransactionServiceTest {
         when(accountService.updateAccountBalance(USER.getAccount())).thenReturn(true);
         when(transactionRepository.save(TRANSACTION1_USER1)).thenReturn(TRANSACTION1_USER1);
 
-        Transaction transaction = transactionService
-                .processTransaction(UUID_TRANSACTION1, USER_1_ID, TransactionType.DEPOSIT, AMOUNT.toString());
+        TransactionDto transaction = transactionService
+                .processTransaction(TRANSACTION_REQUEST, USER_1_ID);
 
-        assertThat(transaction).isEqualTo(TRANSACTION1_USER1);
+        assertThat(transaction).isEqualTo(TRANSACTION1_USER1_DTO);
     }
 }

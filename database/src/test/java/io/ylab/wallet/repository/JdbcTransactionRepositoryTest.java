@@ -1,6 +1,6 @@
 package io.ylab.wallet.repository;
 
-import io.ylab.wallet.config.ConnectionManager;
+import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.domain.entity.TransactionType;
 import io.ylab.wallet.entity.TransactionEntity;
 import io.ylab.wallet.exception.DatabaseException;

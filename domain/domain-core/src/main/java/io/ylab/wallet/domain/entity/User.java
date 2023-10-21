@@ -9,9 +9,9 @@ import lombok.*;
 @Setter
 @Builder
 public class User {
-    private long id;
-    private final String username;
-    private final String password;
+    private Long id;
+    private String username;
+    private String password;
     /**
      * AccountId of the user.
      */
