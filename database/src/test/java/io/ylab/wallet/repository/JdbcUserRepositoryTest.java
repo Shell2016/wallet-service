@@ -3,7 +3,7 @@ package io.ylab.wallet.repository;
 import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.entity.AccountEntity;
 import io.ylab.wallet.entity.UserEntity;
-import io.ylab.wallet.liquibase.MigrationUtils;
+import io.ylab.wallet.liquibase.MigrationRunner;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -30,8 +30,11 @@ class JdbcUserRepositoryTest {
     private static final long ID_NEW = 4L;
     private static final String USERNAME_NEW = "new_user";
 
-    private final JdbcAccountRepository jdbcAccountRepository = new JdbcAccountRepository();
-    private final JdbcUserRepository jdbcUserRepository = new JdbcUserRepository(jdbcAccountRepository);
+    private static final ConnectionManager connectionManager = new ConnectionManager();
+    private static final MigrationRunner migrationRunner = new MigrationRunner(connectionManager);
+    private final JdbcAccountRepository jdbcAccountRepository = new JdbcAccountRepository(connectionManager);
+    private final JdbcUserRepository jdbcUserRepository =
+            new JdbcUserRepository(connectionManager, jdbcAccountRepository);
 
     /**
      * One container per class because in this class - method test logic is independent.
@@ -45,13 +48,11 @@ class JdbcUserRepositoryTest {
      */
     @BeforeAll
     static void init() {
-        ConnectionManager.setConfig(
+        connectionManager.setConfig(
                 CONTAINER.getJdbcUrl(),
                 CONTAINER.getUsername(),
                 CONTAINER.getPassword());
-        MigrationUtils.setTestChangelog();
-        MigrationUtils.setDefaultSchema();
-        MigrationUtils.runMigrations();
+        migrationRunner.runTestMigrations();
     }
 
     @Test

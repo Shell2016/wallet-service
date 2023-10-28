@@ -3,12 +3,13 @@ package io.ylab.wallet.domain.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.ylab.wallet.domain.config.PropertiesUtils;
 import io.ylab.wallet.domain.entity.User;
 import io.ylab.wallet.domain.exception.AuthException;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -16,13 +17,17 @@ import java.util.*;
  * Server that authenticates and returns to user {@link TokenDetails} if username and password are correct.
  */
 @RequiredArgsConstructor
+@Service
 public class SecurityService {
 
     private final UserRepository userRepository;
 
-    private String secret = PropertiesUtils.get("jwt.secret");
-    private Integer expirationInMinutes = Integer.parseInt(PropertiesUtils.get("jwt.expiration"));
-    private String issuer = PropertiesUtils.get("jwt.issuer");
+    @Value("${jwt.secret}")
+    private String secret;
+    @Value("${jwt.expiration}")
+    private Integer expirationInMinutes;
+    @Value("${jwt.issuer}")
+    private String issuer;
 
     /**
      * Generates jwt token.

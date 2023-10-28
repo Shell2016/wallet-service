@@ -1,7 +1,8 @@
 package io.ylab.wallet.domain.entity;
 
 import io.ylab.wallet.domain.exception.BalanceValidationException;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,16 +24,14 @@ public class Account {
     }
 
     public BigDecimal deposit(BigDecimal amount) {
-        balance = setScale(balance.add(amount));
-        System.out.println("Успешное пополнение счета!\nТекущий баланс: " + balance.toString());
-        return balance;
+        this.balance = setScale(balance.add(amount));
+        return this.balance;
     }
 
     public BigDecimal withdraw(BigDecimal amount) {
         validateWithdrawal(amount);
-        balance = setScale(balance.subtract(amount));
-        System.out.println("Успешное снятие со счета!\nТекущий баланс: " + balance.toString());
-        return balance;
+        this.balance = setScale(balance.subtract(amount));
+        return this.balance;
     }
 
     private void validateWithdrawal(BigDecimal amount) {

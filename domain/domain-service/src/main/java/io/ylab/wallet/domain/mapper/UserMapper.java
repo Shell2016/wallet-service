@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 /**
  * Mapper for user-dto mappings.
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)

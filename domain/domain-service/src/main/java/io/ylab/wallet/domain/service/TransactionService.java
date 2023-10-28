@@ -8,7 +8,7 @@ import io.ylab.wallet.domain.exception.UserNotFoundException;
 import io.ylab.wallet.domain.mapper.TransactionMapper;
 import io.ylab.wallet.domain.port.output.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,6 +19,7 @@ import java.util.UUID;
  * Service that contains transaction business logic.
  */
 @RequiredArgsConstructor
+@Service
 public class TransactionService {
 
     /**
@@ -36,7 +37,7 @@ public class TransactionService {
     /**
      * Mapper for mapping transaction dtos.
      */
-    private final TransactionMapper transactionMapper = Mappers.getMapper(TransactionMapper.class);
+    private final TransactionMapper transactionMapper;
 
     /**
      * Checks if transaction with given id already exists.
@@ -69,8 +70,8 @@ public class TransactionService {
      */
     public TransactionDto processTransaction(TransactionRequest request, long userId) {
         if (transactionExists(request.id())) {
-            throw new TransactionException("Транзакция с id=" + request.id() + " уже зарегистрирована в системе!\n" +
-                                           "Операция отклонена!");
+            throw new TransactionException(
+                    "Транзакция с id=" + request.id() + " уже зарегистрирована в системе! Операция отклонена!");
         }
         User user = userService.getUserById(userId).orElseThrow(
                 () -> new UserNotFoundException("Пользователь не найден!"));
@@ -104,14 +105,12 @@ public class TransactionService {
                                         long userId,
                                         TransactionType type,
                                         String amount) {
-        Transaction transaction = transactionRepository.save(Transaction.builder()
+        return transactionRepository.save(Transaction.builder()
                 .id(UUID.fromString(transactionId))
                 .userId(userId)
                 .type(type)
                 .amount(new BigDecimal(amount))
                 .createdAt(LocalDateTime.now())
                 .build());
-        System.out.println("Транзакция " + transactionId + " зарегистрирована в системе!");
-        return transaction;
     }
 }

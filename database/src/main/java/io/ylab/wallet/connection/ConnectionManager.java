@@ -1,23 +1,22 @@
 package io.ylab.wallet.connection;
 
-import io.ylab.wallet.domain.config.PropertiesUtils;
-import lombok.experimental.UtilityClass;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
 
 /**
  * Utility class for opening jdbc connection.
  */
-@UtilityClass
-public final class ConnectionManager {
+@Component
+public class ConnectionManager {
 
-    private final String URL_KEY = "db.url";
-    private final String USERNAME_KEY = "db.username";
-    private final String PASSWORD_KEY = "db.password";
-
-    private String url = PropertiesUtils.get(URL_KEY);
-    private String username = PropertiesUtils.get(USERNAME_KEY);
-    private String password = PropertiesUtils.get(PASSWORD_KEY);
+    @Value("${db.url}")
+    private String url;
+    @Value("${db.username}")
+    private String username;
+    @Value("${db.password}")
+    private String password;
 
     static {
         try {
@@ -36,7 +35,7 @@ public final class ConnectionManager {
      *
      * @return jdbc Connection
      */
-    public static Connection open() {
+    public Connection open() {
         try {
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
@@ -52,9 +51,9 @@ public final class ConnectionManager {
      * @param username database username
      * @param password database password
      */
-    public static void setConfig(String url, String username, String password) {
-        ConnectionManager.url = url;
-        ConnectionManager.username = username;
-        ConnectionManager.password = password;
+    public void setConfig(String url, String username, String password) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
     }
 }

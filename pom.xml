@@ -11,7 +11,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>domain</module>
-        <module>application</module>
         <module>database</module>
         <module>in</module>
     </modules>
@@ -19,9 +18,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-        <assertj-core.version>3.24.2</assertj-core.version>
-        <junit.version>5.10.0</junit.version>
-        <mockito.version>5.6.0</mockito.version>
         <lombok.version>1.18.30</lombok.version>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
@@ -31,16 +27,29 @@
         <postgresql.version>42.6.0</postgresql.version>
         <liquibase-core.version>4.24.0</liquibase-core.version>
         <jakarta-servlet.version>6.0.0</jakarta-servlet.version>
+        <javax-servlet.version>4.0.1</javax-servlet.version>
         <tomcat.version>10.1.15</tomcat.version>
         <jackson.version>2.15.3</jackson.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <jbcrypt.version>0.4</jbcrypt.version>
         <jjwt.version>0.12.3</jjwt.version>
-        <aspectj.version>1.9.20</aspectj.version>
+        <aspectj.version>1.9.20.1</aspectj.version>
         <aspectj-maven-plugin.version>1.14.0</aspectj-maven-plugin.version>
-        <jetty.version>11.0.17</jetty.version>
+        <jetty.version>10.0.18</jetty.version>
+        <spring.version>5.3.20</spring.version>
+        <logback.version>1.4.11</logback.version>
+        <slf4g.version>2.0.9</slf4g.version>
+        <snakeyaml.version>1.33</snakeyaml.version>
+        <swagger.version>2.9.2</swagger.version>
+        <javax-validation.version>2.0.1.Final</javax-validation.version>
         <testcontainers.version>1.19.1</testcontainers.version>
+        <assertj-core.version>3.24.2</assertj-core.version>
+        <junit.version>5.10.0</junit.version>
+        <mockito.version>5.6.0</mockito.version>
+        <jsonassert.version>1.5.1</jsonassert.version>
+        <hamcrest.version>2.2</hamcrest.version>
+        <jsonpath.version>2.8.0</jsonpath.version>
     </properties>
 
     <dependencyManagement>
@@ -86,6 +95,11 @@
                 <version>${jakarta-servlet.version}</version>
             </dependency>
             <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax-servlet.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
@@ -120,6 +134,31 @@
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjtools</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4g.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.testcontainers</groupId>
@@ -133,6 +172,22 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
@@ -140,7 +195,17 @@
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
+            <artifactId>aspectjtools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
 
         <dependency>
@@ -167,8 +232,36 @@
             <version>${assertj-core.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>${jsonassert.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${jsonpath.version}</version>
+        </dependency>
     </dependencies>
-
 
     <build>
         <plugins>
@@ -257,45 +350,6 @@
                                 </manifest>
                             </archive>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.m50d</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.11.1</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjrt</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjtools</artifactId>
-                        <version>${aspectj.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <complianceLevel>16</complianceLevel>
-                    <source>16</source>
-                    <target>16</target>
-                    <showWeaveInfo>true</showWeaveInfo>
-                    <verbose>true</verbose>
-                    <Xlint>ignore</Xlint>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <forceAjcCompile>true</forceAjcCompile>
-                    <sources/>
-                    <weaveDirectories>
-                        <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
-                    </weaveDirectories>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>

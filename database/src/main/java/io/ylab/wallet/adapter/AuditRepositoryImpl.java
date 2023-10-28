@@ -5,6 +5,7 @@ import io.ylab.wallet.domain.port.output.repository.AuditRepository;
 import io.ylab.wallet.mapper.AuditDataAccessMapper;
 import io.ylab.wallet.repository.JdbcAuditRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * Adapter between AuditRepository and JdbcAuditRepository.
  */
 @RequiredArgsConstructor
+@Component
 public class AuditRepositoryImpl implements AuditRepository {
 
     /**

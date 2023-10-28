@@ -3,7 +3,6 @@ package io.ylab.wallet.in.validation;
 import io.ylab.wallet.domain.dto.TransactionRequest;
 import io.ylab.wallet.domain.dto.UserRequest;
 import io.ylab.wallet.domain.exception.ValidationException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,6 +10,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -54,7 +54,6 @@ class ValidationUtilsTest {
             .username(USERNAME_1)
             .password("12345")
             .build();
-    private static final String VALID_PATH = "/1/balance";
     private static final String INVALID_PATH1 = "/d/balance";
     private static final String INVALID_PATH2 = "/1";
     private static final String INVALID_PATH3 = "/1/balance/transactions";
@@ -90,14 +89,14 @@ class ValidationUtilsTest {
     @DisplayName("validate user request: valid input should not throw exception")
     void validateUserCreateRequestValidInput() {
         assertThatNoException()
-                .isThrownBy(() -> ValidationUtils.validateUserCreateRequest(USER_REQUEST));
+                .isThrownBy(() -> ValidationUtils.validateUserRequest(USER_REQUEST));
     }
 
     @ParameterizedTest
     @DisplayName("validate user request: invalid inputs should throw exception")
     @MethodSource("getInvalidUserRequestArguments")
     void validateUserCreateRequestInvalidInput(UserRequest userRequest) {
-        assertThatThrownBy(() -> ValidationUtils.validateUserCreateRequest(userRequest))
+        assertThatThrownBy(() -> ValidationUtils.validateUserRequest(userRequest))
                 .isInstanceOf(ValidationException.class);
     }
 
@@ -122,9 +121,10 @@ class ValidationUtilsTest {
     @DisplayName("validate path: invalid input should throw exception")
     @MethodSource("getInvalidPathArguments")
     void validatePathInvalidInput(String path) {
-        when(request.getPathInfo()).thenReturn(VALID_PATH);
+        when(request.getPathInfo()).thenReturn(path);
 
-        assertThatNoException().isThrownBy(() -> ValidationUtils.validatePath(request));
+        assertThatThrownBy(() -> ValidationUtils.validatePath(request))
+                .isInstanceOf(ValidationException.class);
     }
 
     private static Stream<Arguments> getInvalidPathArguments() {

@@ -3,6 +3,9 @@ package io.ylab.wallet.repository;
 import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.entity.AccountEntity;
 import io.ylab.wallet.exception.DatabaseException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.Optional;
@@ -10,10 +13,14 @@ import java.util.Optional;
 /**
  * Manipulates account data via JDBC connection.
  */
+@Repository
+@RequiredArgsConstructor
 public class JdbcAccountRepository {
 
+    private final ConnectionManager connectionManager;
+
     public AccountEntity save(AccountEntity account) {
-        try (Connection connection = ConnectionManager.open()) {
+        try (Connection connection = connectionManager.open()) {
             account =  save(account, connection);
         } catch (SQLException e) {
             throw new DatabaseException(e.getMessage());
@@ -45,7 +52,7 @@ public class JdbcAccountRepository {
                 SET balance = ? 
                 WHERE id = ?
                 """;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setBigDecimal(1, account.getBalance());
@@ -64,7 +71,7 @@ public class JdbcAccountRepository {
                 SELECT id, balance FROM wallet.account where user_id = ?
                 """;
         AccountEntity account = null;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, userId);
