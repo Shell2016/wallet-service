@@ -5,11 +5,13 @@ import io.ylab.wallet.domain.dto.UserResponse;
 import io.ylab.wallet.domain.entity.Account;
 import io.ylab.wallet.domain.entity.User;
 import io.ylab.wallet.domain.exception.ResourceProcessingException;
+import io.ylab.wallet.domain.mapper.UserMapper;
 import io.ylab.wallet.domain.port.output.repository.AccountRepository;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
 
 import java.util.Optional;
@@ -44,7 +46,8 @@ class UserServiceTest {
 
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
     private final AccountRepository accountRepository = Mockito.mock(AccountRepository.class);
-    private final UserService userService = new UserService(userRepository, accountRepository);
+    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    private final UserService userService = new UserService(userRepository, accountRepository, userMapper);
 
     @Test
     void createUser() {
@@ -52,6 +55,7 @@ class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(USER);
 
         UserResponse userResponse = userService.createUser(USER_REQUEST);
+
         assertThat(userResponse).isEqualTo(EXPECTED_USER_RESPONSE);
     }
 

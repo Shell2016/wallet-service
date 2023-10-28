@@ -1,29 +1,27 @@
 package io.ylab.wallet.domain.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.ylab.wallet.domain.config.PropertiesUtils;
 import io.ylab.wallet.domain.exception.AuthException;
-import io.ylab.wallet.domain.exception.NotAuthorizedException;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.Objects;
 
 /**
- * Utility class that validates received jwt token.
+ * Validates received jwt token.
  */
+@Setter
+@Component
 public class JwtHandler {
 
     /**
-     * Token secret from application.properties.
+     * Token secret from application.yml.
      */
-    private static final String SECRET = PropertiesUtils.get("jwt.secret");
-
-    private JwtHandler() {
-    }
-
+    @Value("${jwt.secret}")
+    private String secret;
     /**
      * Verifies if token is not expired and compares id from claims with id from path.
      * Throws exceptions if token expired or if ids is different.
@@ -31,26 +29,22 @@ public class JwtHandler {
      * @param token
      * @param userId
      */
-    public static void verify(String token, String userId) {
-        Claims claims = getClaimsFromToken(token);
-        Date expiration = claims.getExpiration();
-        if (expiration.before(new Date())) {
-            throw new AuthException("Token expired!");
-        }
+    public void verify(String token, String userId) {
+        Claims claims = verifyAndGetClaimsFromToken(token);
         if (!Objects.equals(userId, claims.getSubject())) {
-            throw new NotAuthorizedException("Вы не авторизованы! Доступ запрещен!");
+            throw new AuthException("Вы не авторизованы! Доступ запрещен!");
         }
     }
 
     /**
-     * Extracts claims from token.
+     * Extracts claims from token and verifies key and expiration.
      *
      * @param token to extract
      * @return extracted claims
      */
-    private static Claims getClaimsFromToken(String token) {
+    private Claims verifyAndGetClaimsFromToken(String token) {
         return Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET)))
+                .verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)))
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

@@ -1,4 +1,4 @@
-package io.ylab.wallet.domain.exception;
+package io.ylab.wallet.in.exception;
 
 import lombok.Builder;
 

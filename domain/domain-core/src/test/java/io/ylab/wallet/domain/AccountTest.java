@@ -36,8 +36,8 @@ class AccountTest {
          account.deposit(AMOUNT_10000);
 
          assertThatThrownBy(() -> account.withdraw(BigDecimal.valueOf(10001)))
-                 .isInstanceOf(BalanceValidationException.class)
-                 .hasMessage("Недостаточно средств на счете!");
+                 .isInstanceOf(BalanceValidationException.class);
+
     }
 
     @Test

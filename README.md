@@ -2,11 +2,15 @@
 
 Порядок запуска:
 
-1. mvn clean package
-2. docker compose up -d  (запускает постгрес и сервис который накатывает миграции)
+1. mvn clean package (optional step)
+2. docker compose up -d  (запускает постгрес)
 3. mvn jetty:run (использую jetty-maven-plugin вместо томката для удобства)
+Также можно запустить вручную через Tomcat 9
 
-Приложение будет запущено на порте 8080
+Приложение будет запущено на порте 8080  
+
+Swagger docs: http://localhost:8080/v2/api-docs  
+Swagger UI: http://localhost:8080/swagger-ui.html
 
 Описание API:
 

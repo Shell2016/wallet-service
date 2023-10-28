@@ -10,8 +10,8 @@ import io.ylab.wallet.domain.mapper.UserMapper;
 import io.ylab.wallet.domain.port.output.repository.AccountRepository;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -19,17 +19,21 @@ import java.util.Optional;
  * Service with user business logic.
  */
 @RequiredArgsConstructor
+@Service
 public class UserService {
 
     /**
      * Repository for persisting user data.
      */
     private final UserRepository userRepository;
+    /**
+     * Repository for persisting account data.
+     */
     private final AccountRepository accountRepository;
     /**
      * For mapping User to dtos and vice versa.
      */
-    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    private final UserMapper userMapper;
 
     /**
      * Creates user.
@@ -44,7 +48,6 @@ public class UserService {
         User user = userMapper.userCreateRequestToUser(userRequest);
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         User savedUser = userRepository.save(user);
-        System.out.println("Пользователь успешно создан!");
         return userMapper.userToUserResponse(savedUser);
     }
 

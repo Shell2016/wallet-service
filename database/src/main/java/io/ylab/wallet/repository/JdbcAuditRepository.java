@@ -3,6 +3,9 @@ package io.ylab.wallet.repository;
 import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.entity.AuditEntity;
 import io.ylab.wallet.exception.DatabaseException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,13 +14,17 @@ import java.util.List;
 /**
  * Manipulates audit data via JDBC connection.
  */
+@Repository
+@RequiredArgsConstructor
 public class JdbcAuditRepository {
+
+    private final ConnectionManager connectionManager;
 
     public void save(AuditEntity auditItem) {
         String saveAuditSql = """
                 INSERT INTO wallet.audit (info, created_at) VALUES (?, ?)
                 """;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(saveAuditSql)) {
 
             preparedStatement.setString(1, auditItem.getInfo());
@@ -34,7 +41,7 @@ public class JdbcAuditRepository {
                 FROM wallet.audit                
                 """;
         List<AuditEntity> result = new ArrayList<>();
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(getAuditItemsSql)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();

@@ -4,7 +4,7 @@ import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.domain.entity.TransactionType;
 import io.ylab.wallet.entity.TransactionEntity;
 import io.ylab.wallet.exception.DatabaseException;
-import io.ylab.wallet.liquibase.MigrationUtils;
+import io.ylab.wallet.liquibase.MigrationRunner;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -48,7 +48,9 @@ class JdbcTransactionRepositoryTest {
             .createdAt(LOCAL_DATE_TIME_2)
             .build();
 
-    private final JdbcTransactionRepository jdbcTransactionRepository = new JdbcTransactionRepository();
+    private final ConnectionManager connectionManager = new ConnectionManager();
+    private final MigrationRunner migrationRunner = new MigrationRunner(connectionManager);
+    private final JdbcTransactionRepository jdbcTransactionRepository = new JdbcTransactionRepository(connectionManager);
 
     /**
      * New container for each test method to make tests independent.
@@ -62,13 +64,11 @@ class JdbcTransactionRepositoryTest {
      */
     @BeforeEach
     void init() {
-        ConnectionManager.setConfig(
+        connectionManager.setConfig(
                 CONTAINER.getJdbcUrl(),
                 CONTAINER.getUsername(),
                 CONTAINER.getPassword());
-        MigrationUtils.setTestChangelog();
-        MigrationUtils.setDefaultSchema();
-        MigrationUtils.runMigrations();
+        migrationRunner.runTestMigrations();
     }
 
     @Test

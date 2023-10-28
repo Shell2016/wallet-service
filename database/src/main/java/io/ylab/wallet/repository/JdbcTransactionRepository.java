@@ -4,6 +4,9 @@ import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.domain.entity.TransactionType;
 import io.ylab.wallet.entity.TransactionEntity;
 import io.ylab.wallet.exception.DatabaseException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.*;
@@ -11,13 +14,17 @@ import java.util.*;
 /**
  * Manipulates transaction data via JDBC connection.
  */
+@Repository
+@RequiredArgsConstructor
 public class JdbcTransactionRepository {
+
+    private final ConnectionManager connectionManager;
 
     public boolean exists(String id) {
         String sql = """
                 SELECT 1 FROM wallet.transaction where id = ?
                 """;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setObject(1, UUID.fromString(id), Types.OTHER);
@@ -36,7 +43,7 @@ public class JdbcTransactionRepository {
                 INSERT INTO wallet.transaction (id, user_id, amount, type, created_at)\s
                 VALUES (?, ?, ?, ?, ?)
                 """;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setObject(1, transaction.getId(), Types.OTHER);
@@ -59,7 +66,7 @@ public class JdbcTransactionRepository {
                 FROM wallet.transaction
                 """;
         List<TransactionEntity> result = new ArrayList<>();
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             populateResultList(result, preparedStatement);
@@ -76,7 +83,7 @@ public class JdbcTransactionRepository {
                 WHERE user_id = ?
                 """;
         List<TransactionEntity> result = new ArrayList<>();
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, userId);

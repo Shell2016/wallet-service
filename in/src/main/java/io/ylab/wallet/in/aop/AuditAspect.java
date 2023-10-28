@@ -1,95 +1,154 @@
 package io.ylab.wallet.in.aop;
 
-import io.ylab.wallet.domain.dto.TransactionDto;
-import io.ylab.wallet.domain.dto.UserResponse;
-import io.ylab.wallet.domain.security.TokenDetails;
+import io.ylab.wallet.domain.dto.*;
 import io.ylab.wallet.domain.service.AuditService;
-import io.ylab.wallet.in.util.DependencyContainer;
-import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.springframework.stereotype.Component;
 
 /**
  * Aspect for application auditing.
  */
+@Slf4j
 @Aspect
+@Component
+@RequiredArgsConstructor
 public class AuditAspect {
 
     /**
      * Service that handles audit logic.
      */
-    private final AuditService auditService = DependencyContainer.getAuditService();
+    private final AuditService auditService;
 
     /**
-     * Pointcut for authenticationFilter doFilter method.
+     * Pointcut for UserService.createUser() method.
      */
-    @Pointcut("within(io.ylab.wallet.in.filter.AuthenticationFilter) && execution(* *.doFilter(..))")
-    public void authenticationFilter() {
+    @Pointcut("within(io.ylab.wallet.domain.service.UserService) && execution(* *.createUser(..))")
+    public void userRegister() {
     }
 
     /**
-     * Pointcut for method that return error response.
+     * Pointcut for AccountService.getBalance() method.
      */
-    @Pointcut("within(io.ylab.wallet.in.util.JsonHelper) && execution(* *.buildErrorResponse(..))")
-    public void jsonHelperBuildError() {
+    @Pointcut("within(io.ylab.wallet.domain.service.AccountService) && execution(* *.getBalance(..))")
+    public void accountService() {
     }
 
     /**
-     * Pointcut for method that returns json response.
+     * Pointcut for TransactionService.processTransaction() method.
      */
-    @Pointcut("within(io.ylab.wallet.in.util.JsonHelper) && execution(* *.buildJsonFromObject(..))")
-    public void jsonHelperBuildJson() {
+    @Pointcut("within(io.ylab.wallet.domain.service.TransactionService) && execution(* *.processTransaction(..))")
+    public void processTransaction() {
     }
 
     /**
-     * Advice for auditing all requests from users (http method and path).
+     * Pointcut for SecurityService.authenticate() method.
+     */
+    @Pointcut("within(io.ylab.wallet.domain.security.SecurityService) && execution(* *.authenticate(..))")
+    public void authenticate() {
+    }
+
+    /**
+     * Aspect for audit of user register process.
+     *
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    @Around("userRegister()")
+    public Object auditUserRegister(ProceedingJoinPoint joinPoint) throws Throwable {
+        var userRequest = (UserRequest) joinPoint.getArgs()[0];
+        String auditInfo = "Attempt to register new user with username: " + userRequest.username();
+        log.info(auditInfo);
+        auditService.audit(auditInfo);
+        Object result;
+        try {
+            result = joinPoint.proceed();
+        } catch (Throwable e) {
+            auditInfo = "Register user error: " + e.getMessage();
+            log.error(auditInfo);
+            auditService.audit(auditInfo);
+            throw e;
+        }
+        auditInfo = "New user created: " + result;
+        log.info(auditInfo);
+        auditService.audit(auditInfo);
+        return result;
+    }
+
+    /**
+     * Aspect for audit of balance requests.
+     *
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    @Around("accountService()")
+    public Object auditGetBalance(ProceedingJoinPoint joinPoint) throws Throwable {
+        var userId = (long) joinPoint.getArgs()[0];
+        String auditInfo = "Balance request for user with id: " + userId;
+        log.info(auditInfo);
+        auditService.audit(auditInfo);
+        Object result;
+        try {
+            result = joinPoint.proceed();
+        } catch (Throwable e) {
+            auditInfo = "Balance request error: " + e.getMessage();
+            log.error(auditInfo);
+            auditService.audit(auditInfo);
+            throw e;
+        }
+        BalanceResponse balanceResponse = (BalanceResponse) result;
+        log.info("Balance received for user {}", userId);
+        auditInfo = "User " + userId + " current balance: " + balanceResponse.balance();
+        auditService.audit(auditInfo);
+        return result;
+    }
+
+    /**
+     * Aspect for transaction processing audit.
+     *
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    @Around("processTransaction()")
+    public Object auditProcessTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
+        var args = joinPoint.getArgs();
+        TransactionRequest transactionRequest = (TransactionRequest) args[0];
+        long userId = (long) args[1];
+        String auditInfo =
+                "Starting transaction processing for user " + userId + ", transaction: " + transactionRequest;
+        log.info(auditInfo);
+        auditService.audit(auditInfo);
+        Object result;
+        try {
+            result = joinPoint.proceed();
+        } catch (Throwable e) {
+            auditInfo = "Error while processing transaction: " + e.getMessage();
+            log.error(auditInfo);
+            auditService.audit(auditInfo);
+            throw e;
+        }
+        auditInfo = "Processed transaction: " + result;
+        log.info(auditInfo);
+        auditService.audit(auditInfo);
+        return result;
+    }
+
+    /**
+     * Aspect for successful authentication audit.
      *
      * @param joinPoint
      */
-    @Before("authenticationFilter()")
-    public void auditInvokedUriAndMethod(JoinPoint joinPoint) {
-        HttpServletRequest req = (HttpServletRequest) joinPoint.getArgs()[0];
-        if (req.getMethod() == null) {
-            return;
-        }
-        String auditInfo = "Invoked API request: " + req.getMethod() + " " + req.getRequestURI();
+    @AfterReturning("authenticate()")
+    public void auditAuthentication(JoinPoint joinPoint) {
+        String username = (String) joinPoint.getArgs()[0];
+        String auditInfo = "JWT token generated and sent to user " + username;
+        log.info(auditInfo);
         auditService.audit(auditInfo);
-    }
-
-    /**
-     * Advice for auditing errors.
-     *
-     * @param result for accessing method returned object
-     */
-    @AfterReturning(value = "jsonHelperBuildError()", returning = "result")
-    public void auditErrors(Object result) {
-        String auditInfo = "Sent error response: " + result.toString();
-        auditService.audit(auditInfo);
-    }
-
-    /**
-     * Advice for auditing successful user operations.
-     *
-     * @param joinPoint for accessing method arguments
-     */
-    @AfterReturning("jsonHelperBuildJson()")
-    public void auditResponse(JoinPoint joinPoint) {
-        Object object = joinPoint.getArgs()[0];
-        Class<?> clazz = object.getClass();
-        if (clazz == TokenDetails.class) {
-            TokenDetails tokenDetails = (TokenDetails) object;
-            String auditInfo = "Successful authentication for user with id: " + tokenDetails.getUserId();
-            auditService.audit(auditInfo);
-        } else if (clazz == UserResponse.class) {
-            UserResponse userResponse = (UserResponse) object;
-            String auditInfo = "Successful registration for user with id: " + userResponse.id() + " and username: " +
-                               userResponse.username();
-            auditService.audit(auditInfo);
-        } else if (clazz == TransactionDto.class) {
-            TransactionDto transactionDto = (TransactionDto) object;
-            String auditInfo = "Successful transaction " + transactionDto.id() +
-                               " for user with id " + transactionDto.userId();
-            auditService.audit(auditInfo);
-        }
     }
 }

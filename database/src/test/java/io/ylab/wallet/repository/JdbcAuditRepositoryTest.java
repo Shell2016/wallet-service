@@ -2,7 +2,7 @@ package io.ylab.wallet.repository;
 
 import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.entity.AuditEntity;
-import io.ylab.wallet.liquibase.MigrationUtils;
+import io.ylab.wallet.liquibase.MigrationRunner;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -16,7 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 class JdbcAuditRepositoryTest {
 
-    private final JdbcAuditRepository jdbcAuditRepository = new JdbcAuditRepository();
+    private final ConnectionManager connectionManager = new ConnectionManager();
+    private final MigrationRunner migrationRunner = new MigrationRunner(connectionManager);
+    private final JdbcAuditRepository jdbcAuditRepository = new JdbcAuditRepository(connectionManager);
 
     /**
      * New container for each test method to make tests independent.
@@ -30,13 +32,11 @@ class JdbcAuditRepositoryTest {
      */
     @BeforeEach
     void init() {
-        ConnectionManager.setConfig(
+        connectionManager.setConfig(
                 CONTAINER.getJdbcUrl(),
                 CONTAINER.getUsername(),
                 CONTAINER.getPassword());
-        MigrationUtils.setTestChangelog();
-        MigrationUtils.setDefaultSchema();
-        MigrationUtils.runMigrations();
+        migrationRunner.runTestMigrations();
     }
 
     @Test

@@ -4,10 +4,12 @@ import io.ylab.wallet.domain.dto.TransactionDto;
 import io.ylab.wallet.domain.dto.TransactionRequest;
 import io.ylab.wallet.domain.entity.*;
 import io.ylab.wallet.domain.exception.TransactionException;
+import io.ylab.wallet.domain.mapper.TransactionMapper;
 import io.ylab.wallet.domain.port.output.repository.TransactionRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
@@ -59,8 +61,7 @@ class TransactionServiceTest {
             .type(TransactionType.DEPOSIT)
             .build();
     private static final String TRANSACTION_EXISTS_ERROR_MESSAGE =
-            "Транзакция с id=" + UUID_TRANSACTION1 + " уже зарегистрирована в системе!\n" +
-                    "Операция отклонена!";
+            "Транзакция с id=" + UUID_TRANSACTION1 + " уже зарегистрирована в системе! Операция отклонена!";
     private static final User USER = User.builder()
             .id(USER_1_ID)
             .username("testname")
@@ -73,8 +74,9 @@ class TransactionServiceTest {
     private final TransactionRepository transactionRepository = Mockito.mock(TransactionRepository.class);
     private final UserService userService = Mockito.mock(UserService.class);
     private final AccountService accountService = Mockito.mock(AccountService.class);
+    private final TransactionMapper transactionMapper = Mappers.getMapper(TransactionMapper.class);
     private final TransactionService transactionService =
-            new TransactionService(transactionRepository, userService, accountService);
+            new TransactionService(transactionRepository, userService, accountService, transactionMapper);
 
     @Test
     @DisplayName("transactionExists")

@@ -3,6 +3,7 @@ package io.ylab.wallet.domain.service;
 import io.ylab.wallet.domain.dto.AuditItem;
 import io.ylab.wallet.domain.port.output.repository.AuditRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * Service that contains audit business logic.
  */
 @RequiredArgsConstructor
+@Service
 public class AuditService {
 
     /**

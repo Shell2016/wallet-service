@@ -2,10 +2,12 @@ package io.ylab.wallet.mapper;
 
 import io.ylab.wallet.domain.entity.Transaction;
 import io.ylab.wallet.entity.TransactionEntity;
+import org.springframework.stereotype.Component;
 
 /**
  * Maps between domain entities and data access entities.
  */
+@Component
 public class TransactionDataAccessMapper {
 
     public TransactionEntity transactionToTransactionEntity(Transaction transaction) {

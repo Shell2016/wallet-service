@@ -2,10 +2,12 @@ package io.ylab.wallet.mapper;
 
 import io.ylab.wallet.domain.dto.AuditItem;
 import io.ylab.wallet.entity.AuditEntity;
+import org.springframework.stereotype.Component;
 
 /**
  * Maps between domain entities and data access entities.
  */
+@Component
 public class AuditDataAccessMapper {
 
     public AuditItem auditEntityToAuditItem(AuditEntity entity) {

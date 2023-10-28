@@ -5,11 +5,13 @@ import io.ylab.wallet.domain.entity.Account;
 import io.ylab.wallet.domain.exception.ResourceProcessingException;
 import io.ylab.wallet.domain.port.output.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 /**
  * Service that contains account business logic.
  */
 @RequiredArgsConstructor
+@Service
 public class AccountService {
 
     private final AccountRepository accountRepository;

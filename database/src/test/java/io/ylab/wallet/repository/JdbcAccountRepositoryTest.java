@@ -4,7 +4,7 @@ import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.entity.AccountEntity;
 import io.ylab.wallet.entity.UserEntity;
 import io.ylab.wallet.exception.DatabaseException;
-import io.ylab.wallet.liquibase.MigrationUtils;
+import io.ylab.wallet.liquibase.MigrationRunner;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -22,7 +22,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @RequiredArgsConstructor
 class JdbcAccountRepositoryTest {
 
-    private final JdbcAccountRepository jdbcAccountRepository = new JdbcAccountRepository();
+    private static final ConnectionManager connectionManager = new ConnectionManager();
+    private static final MigrationRunner migrationRunner = new MigrationRunner(connectionManager);
+    private static final JdbcAccountRepository jdbcAccountRepository = new JdbcAccountRepository(connectionManager);
 
     /**
      * One container per class because in this class - method test logic is independent.
@@ -36,13 +38,11 @@ class JdbcAccountRepositoryTest {
      */
     @BeforeAll
     static void init() {
-        ConnectionManager.setConfig(
+        connectionManager.setConfig(
                 CONTAINER.getJdbcUrl(),
                 CONTAINER.getUsername(),
                 CONTAINER.getPassword());
-        MigrationUtils.setTestChangelog();
-        MigrationUtils.setDefaultSchema();
-        MigrationUtils.runMigrations();
+        migrationRunner.runTestMigrations();
     }
 
     @Test

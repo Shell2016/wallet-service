@@ -5,6 +5,8 @@ import io.ylab.wallet.entity.AccountEntity;
 import io.ylab.wallet.entity.UserEntity;
 import io.ylab.wallet.exception.DatabaseException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -14,7 +16,10 @@ import java.util.Optional;
  * Manipulates user data via JDBC connection.
  */
 @RequiredArgsConstructor
+@Repository
 public class JdbcUserRepository {
+
+    private final ConnectionManager connectionManager;
 
     /**
      * JDBC implementation of account repository.
@@ -33,7 +38,7 @@ public class JdbcUserRepository {
         Connection connection = null;
         PreparedStatement createUserStatement = null;
         try {
-            connection = ConnectionManager.open();
+            connection = connectionManager.open();
             connection.setAutoCommit(false);
             createUserStatement = connection.prepareStatement(createUserSql, Statement.RETURN_GENERATED_KEYS);
             createUserStatement.setString(1, user.getUsername());
@@ -79,7 +84,7 @@ public class JdbcUserRepository {
         String sql = """
                 SELECT 1 FROM wallet.users where username = ?
                 """;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, username);
@@ -103,7 +108,7 @@ public class JdbcUserRepository {
                 SELECT id, password FROM wallet.users where username = ?
                 """;
         UserEntity user = null;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, username);
@@ -131,7 +136,7 @@ public class JdbcUserRepository {
                 SELECT username FROM wallet.users where id = ?
                 """;
         UserEntity user = null;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = connectionManager.open();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, id);
