@@ -6,7 +6,6 @@ import io.ylab.wallet.domain.entity.Account;
 import io.ylab.wallet.domain.entity.User;
 import io.ylab.wallet.domain.exception.ResourceProcessingException;
 import io.ylab.wallet.domain.mapper.UserMapper;
-import io.ylab.wallet.domain.port.output.repository.AccountRepository;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -45,9 +44,9 @@ class UserServiceTest {
             .build();
 
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
-    private final AccountRepository accountRepository = Mockito.mock(AccountRepository.class);
+    private final AccountService accountService = Mockito.mock(AccountService.class);
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-    private final UserService userService = new UserService(userRepository, accountRepository, userMapper);
+    private final UserService userService = new UserService(userRepository, accountService, userMapper);
 
     @Test
     void createUser() {
@@ -66,7 +65,7 @@ class UserServiceTest {
 
         Assertions.assertThatThrownBy(() -> userService.createUser(USER_REQUEST))
                 .isInstanceOf(ResourceProcessingException.class)
-                .hasMessage("Пользователь с таким именем уже существует!");
+                .hasMessage("User already exists!");
     }
 
     @Test
@@ -90,7 +89,7 @@ class UserServiceTest {
     @Test
     void getUserByIdIfNotExists() {
         when(userRepository.getById(USER_ID)).thenReturn(Optional.empty());
-        when(accountRepository.getByUserId(USER_ID)).thenReturn(Optional.of(ACCOUNT));
+        when(accountService.getByUserId(USER_ID)).thenReturn(Optional.of(ACCOUNT));
 
         Optional<User> result = userService.getUserById(USER_ID);
 
@@ -100,7 +99,7 @@ class UserServiceTest {
     @Test
     void getUserByIdIfExists() {
         when(userRepository.getById(USER_ID)).thenReturn(Optional.of(USER));
-        when(accountRepository.getByUserId(USER_ID)).thenReturn(Optional.of(ACCOUNT));
+        when(accountService.getByUserId(USER_ID)).thenReturn(Optional.of(ACCOUNT));
 
         Optional<User> result = userService.getUserById(USER_ID);
 

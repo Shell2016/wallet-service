@@ -1,6 +1,7 @@
 package io.ylab.wallet.in.controller;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.ylab.wallet.domain.dto.UserRequest;
 import io.ylab.wallet.domain.security.SecurityService;
 import io.ylab.wallet.domain.security.TokenDetails;
@@ -16,12 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication Controller", description = "User authentication")
 public class AuthenticationController {
 
     private final SecurityService securityService;
 
-    @PostMapping(produces = "application/json")
-    @ApiOperation("authenticates user and sends token in response")
+    @Operation(summary = "Authenticate user and send jwt token in response")
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TokenDetails> authenticate(@RequestBody UserRequest userRequest) {
         ValidationUtils.validateUserRequest(userRequest);

@@ -5,7 +5,7 @@ import io.ylab.wallet.domain.port.output.repository.UserRepository;
 import io.ylab.wallet.mapper.UserDataAccessMapper;
 import io.ylab.wallet.repository.JdbcUserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
  * Adapter between UserRepository and JdbcUserRepository.
  */
 @RequiredArgsConstructor
-@Component
+@Repository
 public class UserRepositoryImpl implements UserRepository {
 
     /**

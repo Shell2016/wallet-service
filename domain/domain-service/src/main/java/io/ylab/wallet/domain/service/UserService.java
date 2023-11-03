@@ -7,11 +7,11 @@ import io.ylab.wallet.domain.entity.Account;
 import io.ylab.wallet.domain.entity.User;
 import io.ylab.wallet.domain.exception.ResourceProcessingException;
 import io.ylab.wallet.domain.mapper.UserMapper;
-import io.ylab.wallet.domain.port.output.repository.AccountRepository;
 import io.ylab.wallet.domain.port.output.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,27 +27,30 @@ public class UserService {
      */
     private final UserRepository userRepository;
     /**
-     * Repository for persisting account data.
+     * Service with account business logic.
      */
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
     /**
      * For mapping User to dtos and vice versa.
      */
     private final UserMapper userMapper;
 
     /**
-     * Creates user.
+     * Creates user with account in one transaction.
      *
-     * @param userRequest
-     * @return userResponse
+     * @param userRequest with username and password
+     * @return userResponse with id and username
      */
+    @Transactional
     public UserResponse createUser(UserRequest userRequest) {
         if (userRepository.existsByUsername(userRequest.username())) {
-            throw new ResourceProcessingException("Пользователь с таким именем уже существует!");
+            throw new ResourceProcessingException("User already exists!");
         }
         User user = userMapper.userCreateRequestToUser(userRequest);
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         User savedUser = userRepository.save(user);
+        Account account = accountService.save(savedUser);
+        savedUser.setAccount(account);
         return userMapper.userToUserResponse(savedUser);
     }
 
@@ -71,8 +74,8 @@ public class UserService {
      * @return Optional of User
      */
     public Optional<User> getUserById(long id) {
-        Account account = accountRepository.getByUserId(id)
-                .orElseThrow(() -> new ResourceProcessingException("Не удалось загрузить аккаунт!"));
+        Account account = accountService.getByUserId(id)
+                .orElseThrow(() -> new ResourceProcessingException("Cannot load balance!"));
         Optional<User> optionalUser = userRepository.getById(id);
         if (optionalUser.isEmpty()) {
             return Optional.empty();

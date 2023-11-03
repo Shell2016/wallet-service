@@ -1,21 +1,21 @@
 package io.ylab.wallet.domain.entity;
 
 import io.ylab.wallet.domain.exception.BalanceValidationException;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Getter
+@Setter
 @Builder
 public class Account {
 
-    private final long id;
+    private Long id;
     /**
      * Id of the owner of the account.
      */
-    private final User user;
+    private User user;
 
     private BigDecimal balance;
 

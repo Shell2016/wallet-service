@@ -1,15 +1,15 @@
 package io.ylab.wallet.repository;
 
-import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.domain.entity.TransactionType;
 import io.ylab.wallet.entity.TransactionEntity;
 import io.ylab.wallet.exception.DatabaseException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Manipulates transaction data via JDBC connection.
@@ -18,92 +18,79 @@ import java.util.*;
 @RequiredArgsConstructor
 public class JdbcTransactionRepository {
 
-    private final ConnectionManager connectionManager;
+    /**
+     * JdbcTemplate for sql querying.
+     */
+    private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * TransactionEntity row mapper.
+     */
+    private final RowMapper<TransactionEntity> transactionEntityRowMapper = (rs, rowNum) ->
+            TransactionEntity.builder()
+                    .id(rs.getObject("id", UUID.class))
+                    .userId(rs.getLong("user_id"))
+                    .amount(rs.getBigDecimal("amount"))
+                    .type(TransactionType.valueOf(rs.getString("type")))
+                    .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                    .build();
+
+    /**
+     * Checks if transaction with given id exists.
+     *
+     * @param id uuid of transaction
+     * @return true if exists
+     */
     public boolean exists(String id) {
         String sql = """
-                SELECT 1 FROM wallet.transaction where id = ?
+                SELECT COUNT(*) FROM wallet.transaction where id = ? LIMIT 1
                 """;
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setObject(1, UUID.fromString(id), Types.OTHER);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
-        }
-        return false;
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, UUID.fromString(id));
+        return count != null && count == 1;
     }
 
+    /**
+     * Persists given transaction in database.
+     */
     public TransactionEntity save(TransactionEntity transaction) {
         String sql = """
-                INSERT INTO wallet.transaction (id, user_id, amount, type, created_at)\s
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO wallet.transaction (id, user_id, amount, type, created_at)
+                 VALUES (?, ?, ?, ?, ?)
                 """;
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setObject(1, transaction.getId(), Types.OTHER);
-            preparedStatement.setLong(2, transaction.getUserId());
-            preparedStatement.setBigDecimal(3, transaction.getAmount());
-            preparedStatement.setString(4, transaction.getType().name());
-            preparedStatement.setTimestamp(5, Timestamp.valueOf(transaction.getCreatedAt()));
-            if (preparedStatement.executeUpdate() == 1) {
-                return transaction;
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
+        int updated = jdbcTemplate.update(sql,
+                transaction.getId(),
+                transaction.getUserId(),
+                transaction.getAmount(),
+                transaction.getType().name(),
+                transaction.getCreatedAt());
+        if (updated != 1) {
+            throw new DatabaseException("Database error while saving transaction: " + transaction);
         }
-        return null;
+        return transaction;
     }
 
+    /**
+     * Gets list of all transactions.
+     */
     public List<TransactionEntity> getAll() {
         String sql = """
-                SELECT id, user_id, amount, type, created_at\s
-                FROM wallet.transaction
+                SELECT id, user_id, amount, type, created_at
+                 FROM wallet.transaction
                 """;
-        List<TransactionEntity> result = new ArrayList<>();
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            populateResultList(result, preparedStatement);
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
-        }
-        return result;
+        return jdbcTemplate.query(sql, transactionEntityRowMapper);
     }
 
+    /**
+     * Gets list of all user's transactions.
+     *
+     * @param userId id of user
+     */
     public List<TransactionEntity> getAllByUserId(long userId) {
         String sql = """
                 SELECT id, user_id, amount, type, created_at\s
                 FROM wallet.transaction\s
                 WHERE user_id = ?
                 """;
-        List<TransactionEntity> result = new ArrayList<>();
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setLong(1, userId);
-            populateResultList(result, preparedStatement);
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
-        }
-        return result;
-    }
-
-    private void populateResultList(List<TransactionEntity> result, PreparedStatement preparedStatement) throws SQLException {
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            result.add(TransactionEntity.builder()
-                    .id(resultSet.getObject("id", UUID.class))
-                    .userId(resultSet.getLong("user_id"))
-                    .amount(resultSet.getBigDecimal("amount"))
-                    .type(TransactionType.valueOf(resultSet.getString("type")))
-                    .createdAt(resultSet.getTimestamp("created_at").toLocalDateTime())
-                    .build());
-        }
+        return jdbcTemplate.query(sql, transactionEntityRowMapper, userId);
     }
 }

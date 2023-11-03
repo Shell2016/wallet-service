@@ -2,27 +2,14 @@ package io.ylab.wallet.mapper;
 
 import io.ylab.wallet.domain.entity.User;
 import io.ylab.wallet.entity.UserEntity;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
 /**
  * Maps between domain entities and data access entities.
  */
-@Component
-public class UserDataAccessMapper {
+@Mapper(componentModel = "spring")
+public interface UserDataAccessMapper {
 
-    public User userEntityToUser(UserEntity userEntity) {
-        return User.builder()
-                .id(userEntity.getId())
-                .username(userEntity.getUsername())
-                .password(userEntity.getPassword())
-                .build();
-    }
-
-    public UserEntity userToUserEntity(User user) {
-        return UserEntity.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .build();
-    }
+    User userEntityToUser(UserEntity userEntity);
+    UserEntity userToUserEntity(User user);
 }

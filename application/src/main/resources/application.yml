@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wallet
+    username: ylab
+    password: ylab
+  liquibase:
+    liquibase-schema: migration
+    change-log: classpath:db/changelog/db.changelog-master.xml
+jwt:
+  secret: b5f59337a612a2a7dc07328f3e7d1a04722967c7f06df20a499a7d3f91ff2a7e
+  expiration: 240
+  issuer: ylab
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  liquibase:
+    liquibase-schema: public
+    change-log: classpath:db/changelog/db.changelog-master-test.xml

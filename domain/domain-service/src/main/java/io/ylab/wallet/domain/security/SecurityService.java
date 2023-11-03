@@ -78,6 +78,6 @@ public class SecurityService {
                 .map(user -> generateToken(user).toBuilder()
                         .userId(user.getId())
                         .build())
-                .orElseThrow(() -> new AuthException("Неправильный логин или пароль!"));
+                .orElseThrow(() -> new AuthException("Incorrect credentials!"));
     }
 }
