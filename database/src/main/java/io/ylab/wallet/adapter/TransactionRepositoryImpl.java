@@ -5,7 +5,7 @@ import io.ylab.wallet.domain.port.output.repository.TransactionRepository;
 import io.ylab.wallet.mapper.TransactionDataAccessMapper;
 import io.ylab.wallet.repository.JdbcTransactionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * Adapter between TransactionRepository and JdbcTransactionRepository.
  */
 @RequiredArgsConstructor
-@Component
+@Repository
 public class TransactionRepositoryImpl implements TransactionRepository {
 
     /**

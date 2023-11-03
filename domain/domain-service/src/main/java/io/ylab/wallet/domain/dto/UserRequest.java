@@ -1,6 +1,8 @@
 package io.ylab.wallet.domain.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 /**
@@ -10,8 +12,9 @@ import lombok.Builder;
  * @param password length must be >= 6
  */
 @Builder
-public record UserRequest(@ApiModelProperty(required = true)
+public record UserRequest(@NotBlank
                           String username,
-                          @ApiModelProperty(required = true, notes = "6 characters or more")
+                          @Min(6L)
+                          @Schema(description = "Should be at least 6 characters long")
                           String password) {
 }

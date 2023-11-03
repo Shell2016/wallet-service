@@ -43,7 +43,7 @@ class AccountServiceTest {
 
         assertThatThrownBy(() -> accountService.getBalance(USER_ID))
                 .isInstanceOf(ResourceProcessingException.class)
-                .hasMessage("Не удалось загрузить баланс!");
+                .hasMessage("Cannot load balance!");
     }
 
     @Test

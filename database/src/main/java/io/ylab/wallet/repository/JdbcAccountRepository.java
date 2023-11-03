@@ -1,89 +1,77 @@
 package io.ylab.wallet.repository;
 
-import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.entity.AccountEntity;
-import io.ylab.wallet.exception.DatabaseException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * Manipulates account data via JDBC connection.
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class JdbcAccountRepository {
 
-    private final ConnectionManager connectionManager;
+    /**
+     * JdbcTemplate for sql querying.
+     */
+    private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * Persists given account.
+     * @return AccountEntity with generated id
+     */
     public AccountEntity save(AccountEntity account) {
-        try (Connection connection = connectionManager.open()) {
-            account =  save(account, connection);
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
-        }
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withSchemaName("wallet")
+                .withTableName("account")
+                .usingGeneratedKeyColumns("id");
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", account.getUser().getId());
+        params.put("balance", BigDecimal.ZERO);
+        long id = insert.executeAndReturnKey(params).longValue();
+        account.setId(id);
         return account;
     }
 
-    public AccountEntity save(AccountEntity account, Connection connection) throws SQLException {
-        String createAccountSql = """
-                INSERT INTO wallet.account (user_id, balance) VALUES (?, ?)
-                """;
-        long accountId;
-        try (PreparedStatement createAccountStatement =
-                     connection.prepareStatement(createAccountSql, Statement.RETURN_GENERATED_KEYS)) {
-            createAccountStatement.setLong(1, account.getUser().getId());
-            createAccountStatement.setBigDecimal(2, account.getBalance());
-            createAccountStatement.executeUpdate();
-            ResultSet generatedKeys = createAccountStatement.getGeneratedKeys();
-            generatedKeys.next();
-            accountId = generatedKeys.getLong("id");
-        }
-        account.setId(accountId);
-        return account;
-    }
-
+    /**
+     * Updates balance of given account.
+     * @return true if successful
+     */
     public boolean updateBalance(AccountEntity account) {
         String sql = """
-                UPDATE wallet.account 
-                SET balance = ? 
+                UPDATE wallet.account\s
+                SET balance = ?\s
                 WHERE id = ?
                 """;
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setBigDecimal(1, account.getBalance());
-            preparedStatement.setLong(2, account.getId());
-            if (preparedStatement.executeUpdate() == 1) {
-                return true;
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
-        }
-        return false;
+        int updatedRows = jdbcTemplate.update(sql, account.getBalance(), account.getId());
+        return updatedRows == 1;
     }
 
+    /**
+     * Gets AccountEntity by userId.
+     */
     public Optional<AccountEntity> getByUserId(long userId) {
         String sql = """
                 SELECT id, balance FROM wallet.account where user_id = ?
                 """;
         AccountEntity account = null;
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setLong(1, userId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                account = AccountEntity.builder()
-                        .id(resultSet.getLong("id"))
-                        .balance(resultSet.getBigDecimal("balance"))
-                        .build();
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
+        try {
+            account = jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
+                    AccountEntity.builder()
+                            .id(rs.getLong("id"))
+                            .balance(rs.getBigDecimal("balance"))
+                            .build(),
+                    userId);
+        } catch (DataAccessException e) {
+            log.debug("Account with user id " + userId + " was not found!");
         }
         return Optional.ofNullable(account);
     }

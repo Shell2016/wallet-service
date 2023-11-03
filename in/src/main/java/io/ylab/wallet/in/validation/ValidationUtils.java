@@ -3,10 +3,9 @@ package io.ylab.wallet.in.validation;
 import io.ylab.wallet.domain.dto.TransactionRequest;
 import io.ylab.wallet.domain.dto.UserRequest;
 import io.ylab.wallet.domain.exception.ValidationException;
-
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.UUID;
 

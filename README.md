@@ -2,15 +2,18 @@
 
 Порядок запуска:
 
-1. mvn clean package (optional step)
-2. docker compose up -d  (запускает постгрес)
-3. mvn jetty:run (использую jetty-maven-plugin вместо томката для удобства)
-Также можно запустить вручную через Tomcat 9
+
+1. docker compose up -d  (запускает постгрес)
+2. mvn clean package && java -jar application/target/application-1.0-SNAPSHOT.jar
 
 Приложение будет запущено на порте 8080  
 
-Swagger docs: http://localhost:8080/v2/api-docs  
+Swagger docs: http://localhost:8080/v3/api-docs  
 Swagger UI: http://localhost:8080/swagger-ui.html
+
+audit-starter подключается автоматически. Для его отключения: audit.enabled=false 
+
+execution-time-logging-starter подключается с помощью аннотации @EnableExecutionTimeLogging
 
 Описание API:
 

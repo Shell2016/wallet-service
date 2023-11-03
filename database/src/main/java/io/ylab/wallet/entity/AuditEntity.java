@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * Data access entity.
+ * Data access audit entity.
  */
 @Getter
 @Setter

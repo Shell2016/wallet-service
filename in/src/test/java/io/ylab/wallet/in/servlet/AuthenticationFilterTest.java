@@ -1,13 +1,14 @@
 package io.ylab.wallet.in.servlet;
 
+import io.ylab.wallet.domain.security.JwtHandler;
 import io.ylab.wallet.in.filter.AuthenticationFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -19,7 +20,8 @@ class AuthenticationFilterTest {
     private final HttpServletResponse response = mock(HttpServletResponse.class);
     private final FilterChain chain = mock(FilterChain.class);
     private final PrintWriter writer = mock(PrintWriter.class);
-    private final AuthenticationFilter filter = new AuthenticationFilter();
+    private final JwtHandler jwtHandler = mock(JwtHandler.class);
+    private final AuthenticationFilter filter = new AuthenticationFilter(jwtHandler);
 
     @Test
     @DisplayName("should pass request to chain if public path")
