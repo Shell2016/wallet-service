@@ -1,105 +1,64 @@
 package io.ylab.wallet.repository;
 
-import io.ylab.wallet.connection.ConnectionManager;
-import io.ylab.wallet.entity.AccountEntity;
 import io.ylab.wallet.entity.UserEntity;
-import io.ylab.wallet.exception.DatabaseException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Manipulates user data via JDBC connection.
  */
+@Slf4j
 @RequiredArgsConstructor
 @Repository
 public class JdbcUserRepository {
 
-    private final ConnectionManager connectionManager;
-
     /**
-     * JDBC implementation of account repository.
+     * JdbcTemplate for sql querying.
      */
-    private final JdbcAccountRepository accountRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     /**
-     * Creates user with account in one transaction.
+     * Persists user into database.
+     *
      * @param user to save
-     * @return UserEntity with account set
+     * @return UserEntity with generated id set
      */
     public UserEntity save(UserEntity user) {
-        String createUserSql = """
-                INSERT INTO wallet.users (username, password) VALUES (?, ?)
-                """;
-        Connection connection = null;
-        PreparedStatement createUserStatement = null;
-        try {
-            connection = connectionManager.open();
-            connection.setAutoCommit(false);
-            createUserStatement = connection.prepareStatement(createUserSql, Statement.RETURN_GENERATED_KEYS);
-            createUserStatement.setString(1, user.getUsername());
-            createUserStatement.setString(2, user.getPassword());
-            createUserStatement.executeUpdate();
-            ResultSet generatedKeys = createUserStatement.getGeneratedKeys();
-            generatedKeys.next();
-            long userId = generatedKeys.getLong("id");
-            user.setId(userId);
-            AccountEntity account = AccountEntity.builder()
-                    .user(user)
-                    .balance(BigDecimal.ZERO)
-                    .build();
-            AccountEntity savedAccount = accountRepository.save(account, connection);
-            user.setAccount(savedAccount);
-            connection.commit();
-        } catch (Exception e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                    System.err.println("Транзакция отменена: " + e.getMessage());
-                } catch (SQLException rollbackException) {
-                    System.err.println("Ошибка при откате транзакции: " + rollbackException.getMessage());
-                    throw new DatabaseException(rollbackException.getMessage());
-                }
-            }
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-                if (createUserStatement != null) {
-                    createUserStatement.close();
-                }
-            } catch (SQLException closeException) {
-                System.err.println("Ошибка при закрытии соединения: " + closeException.getMessage());
-            }
-        }
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withSchemaName("wallet")
+                .withTableName("users")
+                .usingGeneratedKeyColumns("id");
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", user.getUsername());
+        params.put("password", user.getPassword());
+        long id = insert.executeAndReturnKey(params).longValue();
+        user.setId(id);
         return user;
     }
 
+    /**
+     * Checks if user exists.
+     *
+     * @param username of the user to find
+     * @return true if user with given username exists
+     */
     public boolean existsByUsername(String username) {
         String sql = """
-                SELECT 1 FROM wallet.users where username = ?
+                SELECT COUNT(*) FROM wallet.users where username = ? LIMIT 1
                 """;
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setString(1, username);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
-        }
-        return false;
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, username);
+        return count != null && count == 1;
     }
 
     /**
      * Gets user by username (with password)
+     *
      * @param username of user to find
      * @return user with password
      */
@@ -108,26 +67,22 @@ public class JdbcUserRepository {
                 SELECT id, password FROM wallet.users where username = ?
                 """;
         UserEntity user = null;
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setString(1, username);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                user = UserEntity.builder()
-                        .id(resultSet.getLong("id"))
-                        .username(username)
-                        .password(resultSet.getString("password"))
-                        .build();
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
+        try {
+            user = jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
+                    UserEntity.builder()
+                            .id(rs.getLong("id"))
+                            .username(username)
+                            .password(rs.getString("password"))
+                            .build(), username);
+        } catch (DataAccessException e) {
+            log.debug("Cannot find user with username: " + username);
         }
         return Optional.ofNullable(user);
     }
 
     /**
      * Gets user without password
+     *
      * @param id of user to find
      * @return user without password
      */
@@ -136,19 +91,14 @@ public class JdbcUserRepository {
                 SELECT username FROM wallet.users where id = ?
                 """;
         UserEntity user = null;
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                user = UserEntity.builder()
-                        .id(id)
-                        .username(resultSet.getString("username"))
-                        .build();
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
+        try {
+            user = jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
+                    UserEntity.builder()
+                            .id(id)
+                            .username(rs.getString("username"))
+                            .build(), id);
+        } catch (DataAccessException e) {
+            log.debug("Cannot find user with id: " + id);
         }
         return Optional.ofNullable(user);
     }

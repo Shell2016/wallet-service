@@ -3,38 +3,26 @@ package io.ylab.wallet.in.filter;
 import io.ylab.wallet.domain.exception.AuthException;
 import io.ylab.wallet.domain.security.JwtHandler;
 import io.ylab.wallet.in.util.JsonHelper;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 /**
  * Filter that verifies user jwt token if not public path.
  */
 @RequiredArgsConstructor
+@Component
 public class AuthenticationFilter extends HttpFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private JwtHandler jwtHandler;
-
-    /**
-     * Initializes jwtHandler for verifying token.
-     * Spring cannot manage filter like ordinary component and cannot automatically inject beans to it.
-     *
-     * @param config the <code>FilterConfig</code> object that contains configuration information for this filter
-     *
-     */
-    @Override
-    public void init(FilterConfig config) {
-        var context =
-                WebApplicationContextUtils.getRequiredWebApplicationContext(config.getServletContext());
-        jwtHandler = context.getBean(JwtHandler.class);
-    }
+    private final JwtHandler jwtHandler;
 
     @Override
     public void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain)

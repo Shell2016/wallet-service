@@ -1,59 +1,46 @@
 package io.ylab.wallet.repository;
 
-import io.ylab.wallet.connection.ConnectionManager;
 import io.ylab.wallet.entity.AuditEntity;
-import io.ylab.wallet.exception.DatabaseException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Manipulates audit data via JDBC connection.
  */
-@Repository
 @RequiredArgsConstructor
+@Component
 public class JdbcAuditRepository {
 
-    private final ConnectionManager connectionManager;
+    /**
+     * JdbcTemplate for sql querying.
+     */
+    private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * Persists audit info into database.
+     * @param auditItem with audit info
+     */
     public void save(AuditEntity auditItem) {
-        String saveAuditSql = """
+        String sql = """
                 INSERT INTO wallet.audit (info, created_at) VALUES (?, ?)
                 """;
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(saveAuditSql)) {
-
-            preparedStatement.setString(1, auditItem.getInfo());
-            preparedStatement.setTimestamp(2, Timestamp.valueOf(auditItem.getCreatedAt()));
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
-        }
+        jdbcTemplate.update(sql, auditItem.getInfo(), auditItem.getCreatedAt());
     }
 
+    /**
+     * Gets list of all audit items.
+     */
     public List<AuditEntity> getAuditItems() {
-        String getAuditItemsSql = """
-                SELECT info, created_at 
-                FROM wallet.audit                
+        String sql = """
+                SELECT info, created_at\s
+                FROM wallet.audit
                 """;
-        List<AuditEntity> result = new ArrayList<>();
-        try (Connection connection = connectionManager.open();
-             PreparedStatement preparedStatement = connection.prepareStatement(getAuditItemsSql)) {
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                result.add(AuditEntity.builder()
-                        .info(resultSet.getString("info"))
-                        .createdAt(resultSet.getTimestamp("created_at").toLocalDateTime())
-                        .build());
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e.getMessage());
-        }
-        return result;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> AuditEntity.builder()
+                .info(rs.getString("info"))
+                .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                .build());
     }
 }

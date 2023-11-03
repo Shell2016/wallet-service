@@ -38,9 +38,9 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         return ResponseEntity.badRequest().body(buildApiError(e, BAD_REQUEST));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(NOT_FOUND)
-    public ResponseEntity<ApiError> handleUserNotFoundException(UserNotFoundException e) {
+    public ResponseEntity<ApiError> handleUserNotFoundException(EntityNotFoundException e) {
         return ResponseEntity.status(NOT_FOUND).body(buildApiError(e, NOT_FOUND));
     }
 

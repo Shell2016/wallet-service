@@ -5,7 +5,7 @@ import io.ylab.wallet.domain.port.output.repository.AccountRepository;
 import io.ylab.wallet.mapper.AccountDataAccessMapper;
 import io.ylab.wallet.repository.JdbcAccountRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
  * Adapter between AccountRepository and JdbcAccountRepository.
  */
 @RequiredArgsConstructor
-@Component
+@Repository
 public class AccountRepositoryImpl implements AccountRepository {
 
     /**

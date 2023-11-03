@@ -1,6 +1,7 @@
 package io.ylab.wallet.in.controller;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.ylab.wallet.domain.dto.*;
 import io.ylab.wallet.domain.service.AccountService;
 import io.ylab.wallet.domain.service.TransactionService;
@@ -20,21 +21,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Tag(name = "User Controller", description = "User management")
 public class UserController {
 
     private final AccountService accountService;
     private final TransactionService transactionService;
-
     /**
      * Get balance of user with given id.
      *
      * @param id of the user
      * @return balance response with current balance
      */
-    @GetMapping(path = "/{id}/balance", produces = "application/json")
-    @ApiOperation(value = "get user balance",
-            notes = "id пользователя в пути запроса должно совпадать с id авторизованного пользователя. " +
-                    "Этот user_id приходит вместе токеном после успешной аутентификации")
+    @Operation(summary = "Get user balance")
+    @GetMapping(path = "/{id}/balance")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<BalanceResponse> getBalance(@PathVariable long id) {
         return ResponseEntity.ok(accountService.getBalance(id));
@@ -46,10 +45,8 @@ public class UserController {
      * @param id of the user
      * @return list of user transactions
      */
-    @GetMapping(path = "/{id}/transactions", produces = "application/json")
-    @ApiOperation(value = "get list of user's transactions",
-            notes = "id пользователя в пути запроса должно совпадать с id авторизованного пользователя. " +
-                    "Этот user_id приходит вместе токеном после успешной аутентификации")
+    @Operation(summary = "Get list of user's transactions")
+    @GetMapping(path = "/{id}/transactions")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<TransactionDto>> getTransactions(@PathVariable long id) {
         return ResponseEntity.ok(transactionService.getUserTransactions(id));
@@ -62,10 +59,8 @@ public class UserController {
      * @param request with transaction parameters
      * @return TransactionDto
      */
-    @PutMapping(path = "/{id}/transaction", produces = "application/json")
-    @ApiOperation(value = "make transaction",
-            notes = "id пользователя в пути запроса должно совпадать с id авторизованного пользователя. " +
-                    "Этот user_id приходит вместе токеном после успешной аутентификации")
+    @Operation(summary = "Make new transaction")
+    @PutMapping(path = "/{id}/transaction")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<TransactionDto> makeTransaction(@PathVariable long id,
                                                           @RequestBody TransactionRequest request) {
