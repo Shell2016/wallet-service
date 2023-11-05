@@ -23,6 +23,7 @@
         <module>application</module>
         <module>audit-starter</module>
         <module>execution-time-logging-starter</module>
+        <module>common</module>
     </modules>
 
     <properties>
@@ -38,6 +39,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.ylab.wallet</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>io.ylab.wallet</groupId>
                 <artifactId>domain-core</artifactId>

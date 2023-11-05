@@ -1,4 +1,4 @@
-package io.ylab.audit.dto;
+package io.ylab.wallet.entity;
 
 import lombok.*;
 

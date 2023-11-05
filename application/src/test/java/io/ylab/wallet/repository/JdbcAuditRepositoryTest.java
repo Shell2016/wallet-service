@@ -1,7 +1,6 @@
 package io.ylab.wallet.repository;
 
-import io.ylab.audit.dto.AuditEntity;
-import io.ylab.audit.repository.JdbcAuditRepository;
+import io.ylab.wallet.entity.AuditEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

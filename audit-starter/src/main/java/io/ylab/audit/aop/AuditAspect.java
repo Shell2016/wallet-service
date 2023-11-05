@@ -1,6 +1,7 @@
 package io.ylab.audit.aop;
 
-import io.ylab.audit.service.AuditService;
+
+import io.ylab.wallet.domain.service.AuditService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -23,33 +24,33 @@ public class AuditAspect {
     /**
      * Pointcut for UserService.createUser() method.
      */
-    @Pointcut("within(io.ylab.*.*.service.UserService) && execution(* *.createUser(..))")
+    @Pointcut("within(io.ylab.wallet.*.service.UserService) && execution(* *.createUser(..))")
     public void userRegister() {
     }
 
     /**
      * Pointcut for AccountService.getBalance() method.
      */
-    @Pointcut("within(io.ylab.*.*.service.AccountService) && execution(* *.getBalance(..))")
+    @Pointcut("within(io.ylab.wallet.*.service.AccountService) && execution(* *.getBalance(..))")
     public void accountService() {
     }
 
     /**
      * Pointcut for TransactionService.processTransaction() method.
      */
-    @Pointcut("within(io.ylab.*.*.service.TransactionService) && execution(* *.processTransaction(..))")
+    @Pointcut("within(io.ylab.wallet.*.service.TransactionService) && execution(* *.processTransaction(..))")
     public void processTransaction() {
     }
 
     /**
      * Pointcut for SecurityService.authenticate() method.
      */
-    @Pointcut("within(io.ylab.*.*.security.SecurityService) && execution(* *.authenticate(..))")
+    @Pointcut("within(io.ylab.wallet.*.security.SecurityService) && execution(* *.authenticate(..))")
     public void authenticate() {
     }
 
     /**
-     * Aspect for audit of user register process.
+     * Advice for audit of user register process.
      *
      */
     @Around("userRegister()")
@@ -73,7 +74,7 @@ public class AuditAspect {
     }
 
     /**
-     * Aspect for audit of balance requests.
+     * Advice for audit of balance requests.
      *
      */
     @Around("accountService()")
@@ -98,8 +99,7 @@ public class AuditAspect {
     }
 
     /**
-     * Aspect for transaction processing audit.
-     *
+     * Advice for transaction processing audit.
      */
     @Around("processTransaction()")
     public Object auditProcessTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -125,7 +125,7 @@ public class AuditAspect {
     }
 
     /**
-     * Aspect for successful authentication audit.
+     * Advice for successful authentication audit.
      */
     @AfterReturning("authenticate()")
     public void auditAuthentication(JoinPoint joinPoint) {

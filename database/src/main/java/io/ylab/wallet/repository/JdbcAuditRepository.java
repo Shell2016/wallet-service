@@ -1,8 +1,9 @@
-package io.ylab.audit.repository;
+package io.ylab.wallet.repository;
 
-import io.ylab.audit.dto.AuditEntity;
+import io.ylab.wallet.entity.AuditEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -10,7 +11,8 @@ import java.util.List;
  * Manipulates audit data via JDBC connection.
  */
 @RequiredArgsConstructor
-public class JdbcAuditRepository implements AuditRepository {
+@Component
+public class JdbcAuditRepository {
 
     /**
      * JdbcTemplate for sql querying.
@@ -21,7 +23,6 @@ public class JdbcAuditRepository implements AuditRepository {
      * Persists audit info into database.
      * @param auditItem with audit info
      */
-    @Override
     public void save(AuditEntity auditItem) {
         String sql = """
                 INSERT INTO wallet.audit (info, created_at) VALUES (?, ?)
@@ -32,7 +33,6 @@ public class JdbcAuditRepository implements AuditRepository {
     /**
      * Gets list of all audit items.
      */
-    @Override
     public List<AuditEntity> getAuditItems() {
         String sql = """
                 SELECT info, created_at\s
