@@ -68,12 +68,15 @@ public class JdbcUserRepository {
                 """;
         UserEntity user = null;
         try {
-            user = jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
-                    UserEntity.builder()
+            user = jdbcTemplate.queryForObject(
+                    sql,
+                    (rs, rowNum) -> UserEntity.builder()
                             .id(rs.getLong("id"))
                             .username(username)
                             .password(rs.getString("password"))
-                            .build(), username);
+                            .build(),
+                    username
+            );
         } catch (DataAccessException e) {
             log.debug("Cannot find user with username: " + username);
         }
