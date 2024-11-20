@@ -28,7 +28,7 @@ public class TransactionService {
     /**
      * Injection of service that contains user business logic.
      */
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     /**
      * Injection of service that contains account business logic.
      */
@@ -73,7 +73,7 @@ public class TransactionService {
             throw new TransactionException(
                     "Transaction with id=" + request.id() + " already registered! Operation cancelled!");
         }
-        User user = userService.getUserById(userId).orElseThrow(
+        User user = userServiceImpl.getUserById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User not found!"));
         Account account = user.getAccount();
         if (TransactionType.DEPOSIT.name().equalsIgnoreCase(request.type())) {

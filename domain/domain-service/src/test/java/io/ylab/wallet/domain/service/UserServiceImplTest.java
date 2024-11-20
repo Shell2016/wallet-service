@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-class UserServiceTest {
+class UserServiceImplTest {
 
     private static final long USER_ID = 1L;
     private static final String USERNAME = "Ivan";
@@ -46,14 +46,14 @@ class UserServiceTest {
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
     private final AccountService accountService = Mockito.mock(AccountService.class);
     private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-    private final UserService userService = new UserService(userRepository, accountService, userMapper);
+    private final UserServiceImpl userServiceImpl = new UserServiceImpl(userRepository, accountService, userMapper);
 
     @Test
     void createUser() {
         when(userRepository.existsByUsername(USERNAME)).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(USER);
 
-        UserResponse userResponse = userService.createUser(USER_REQUEST);
+        UserResponse userResponse = userServiceImpl.createUser(USER_REQUEST);
 
         assertThat(userResponse).isEqualTo(EXPECTED_USER_RESPONSE);
     }
@@ -63,7 +63,7 @@ class UserServiceTest {
     void createExistingUserShouldThrowException() {
         when(userRepository.existsByUsername(USERNAME)).thenReturn(true);
 
-        Assertions.assertThatThrownBy(() -> userService.createUser(USER_REQUEST))
+        Assertions.assertThatThrownBy(() -> userServiceImpl.createUser(USER_REQUEST))
                 .isInstanceOf(ResourceProcessingException.class)
                 .hasMessage("User already exists!");
     }
@@ -72,7 +72,7 @@ class UserServiceTest {
     void getUserIfValidCredentials() {
         when(userRepository.getByUsername(USERNAME)).thenReturn(Optional.of(USER));
 
-        Optional<UserResponse> result = userService.getUserResponseIfValidCredentials(USERNAME, PASSWORD);
+        Optional<UserResponse> result = userServiceImpl.getUserResponseIfValidCredentials(USERNAME, PASSWORD);
 
         assertThat(result).contains(EXPECTED_USER_RESPONSE);
     }
@@ -81,7 +81,7 @@ class UserServiceTest {
     void getUserIfInvalidCredentials() {
         when(userRepository.getByUsername(USERNAME)).thenReturn(Optional.of(USER));
 
-        Optional<UserResponse> result = userService.getUserResponseIfValidCredentials(USERNAME, "wrongpass");
+        Optional<UserResponse> result = userServiceImpl.getUserResponseIfValidCredentials(USERNAME, "wrongpass");
 
         assertThat(result).isEmpty();
     }
@@ -91,7 +91,7 @@ class UserServiceTest {
         when(userRepository.getById(USER_ID)).thenReturn(Optional.empty());
         when(accountService.getByUserId(USER_ID)).thenReturn(Optional.of(ACCOUNT));
 
-        Optional<User> result = userService.getUserById(USER_ID);
+        Optional<User> result = userServiceImpl.getUserById(USER_ID);
 
         assertThat(result).isEmpty();
     }
@@ -101,7 +101,7 @@ class UserServiceTest {
         when(userRepository.getById(USER_ID)).thenReturn(Optional.of(USER));
         when(accountService.getByUserId(USER_ID)).thenReturn(Optional.of(ACCOUNT));
 
-        Optional<User> result = userService.getUserById(USER_ID);
+        Optional<User> result = userServiceImpl.getUserById(USER_ID);
 
         assertThat(result).contains(USER);
     }

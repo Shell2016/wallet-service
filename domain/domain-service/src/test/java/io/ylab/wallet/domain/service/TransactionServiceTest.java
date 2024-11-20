@@ -65,11 +65,11 @@ class TransactionServiceTest {
     private static final String ACCOUNT_BALANCE_NOT_IN_CONSISTENT_STATE_MESSAGE =
             "Account balance not in consistent state!";
     private final TransactionRepository transactionRepository = Mockito.mock(TransactionRepository.class);
-    private final UserService userService = Mockito.mock(UserService.class);
+    private final UserServiceImpl userServiceImpl = Mockito.mock(UserServiceImpl.class);
     private final AccountService accountService = Mockito.mock(AccountService.class);
     private final TransactionMapper transactionMapper = Mappers.getMapper(TransactionMapper.class);
     private final TransactionService transactionService =
-            new TransactionService(transactionRepository, userService, accountService, transactionMapper);
+            new TransactionService(transactionRepository, userServiceImpl, accountService, transactionMapper);
     private User user1;
 
     @BeforeEach
@@ -120,7 +120,7 @@ class TransactionServiceTest {
     @DisplayName("Processing not existed transaction should not throw exception")
     void processTransactionNotThrowsException() {
         when(transactionRepository.exists(UUID_TRANSACTION1)).thenReturn(false);
-        when(userService.getUserById(anyLong())).thenReturn(Optional.of(user1));
+        when(userServiceImpl.getUserById(anyLong())).thenReturn(Optional.of(user1));
         when(transactionRepository.getAllByUserId(USER_1_ID))
                 .thenReturn(Collections.singletonList(TRANSACTION1_USER1));
 
@@ -132,7 +132,7 @@ class TransactionServiceTest {
     @DisplayName("processing successful transaction")
     void processTransactionSuccess() {
         when(transactionRepository.exists(UUID_TRANSACTION1)).thenReturn(false);
-        when(userService.getUserById(USER_1_ID)).thenReturn(Optional.of(user1));
+        when(userServiceImpl.getUserById(USER_1_ID)).thenReturn(Optional.of(user1));
         when(accountService.updateAccountBalance(user1.getAccount())).thenReturn(true);
         when(transactionRepository.save(TRANSACTION1_USER1)).thenReturn(TRANSACTION1_USER1);
         when(transactionRepository.getAllByUserId(USER_1_ID))
@@ -149,7 +149,7 @@ class TransactionServiceTest {
     void processTransactionThrowsValidationException() {
         user1.getAccount().deposit(BigDecimal.TEN);
         when(transactionRepository.exists(UUID_TRANSACTION1)).thenReturn(false);
-        when(userService.getUserById(USER_1_ID)).thenReturn(Optional.of(user1));
+        when(userServiceImpl.getUserById(USER_1_ID)).thenReturn(Optional.of(user1));
         when(accountService.updateAccountBalance(user1.getAccount())).thenReturn(true);
         when(transactionRepository.save(TRANSACTION1_USER1)).thenReturn(TRANSACTION1_USER1);
         when(transactionRepository.getAllByUserId(USER_1_ID))

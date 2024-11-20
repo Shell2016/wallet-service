@@ -17,6 +17,15 @@ spring:
   config:
     activate:
       on-profile: mongo
+  data:
+    mongodb:
+      password: secret
+      username: root
+      authentication-database: admin
+      database: wallet
+      port: 27017
+      host: localhost
+      auto-index-creation: true
 ---
 spring:
   config:

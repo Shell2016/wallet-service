@@ -3,7 +3,7 @@ package io.ylab.wallet.in.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ylab.wallet.domain.dto.UserRequest;
 import io.ylab.wallet.domain.dto.UserResponse;
-import io.ylab.wallet.domain.service.UserService;
+import io.ylab.wallet.domain.service.UserServiceImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -41,7 +41,7 @@ class UserRegistrationControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Mock
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
     @InjectMocks
     private UserRegistrationController controller;
     private MockMvc mockMvc;
@@ -57,7 +57,7 @@ class UserRegistrationControllerTest {
     @Test
     @DisplayName("createUser success")
     void createUserSuccess() throws Exception {
-        when(userService.createUser(USER_REQUEST)).thenReturn(USER_RESPONSE);
+        when(userServiceImpl.createUser(USER_REQUEST)).thenReturn(USER_RESPONSE);
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +71,7 @@ class UserRegistrationControllerTest {
     @Test
     @DisplayName("createUser should throw exception if user exists")
     void createUserIfExists() {
-        when(userService.createUser(Mockito.any(UserRequest.class)))
+        when(userServiceImpl.createUser(Mockito.any(UserRequest.class)))
                 .thenThrow(new RuntimeException());
 
         assertThatException().isThrownBy(() -> mockMvc.perform(post("/users")

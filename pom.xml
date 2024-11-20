@@ -105,6 +105,11 @@
                 <artifactId>execution-time-logging-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.ylab.wallet</groupId>
+                <artifactId>mongodb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

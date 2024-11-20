@@ -1,0 +1,44 @@
+services:
+
+  wallet-postgres:
+    image: postgres:16-alpine
+    container_name: postgres_local
+    environment:
+      POSTGRES_DB: wallet
+      POSTGRES_USER: ylab
+      POSTGRES_PASSWORD: ylab
+    volumes:
+      - wallet_db:/var/lib/postgresql/data
+      - ./sql/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  wallet-mongodb:
+    image: mongo:latest
+    container_name: mongo_local
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ylab
+      MONGO_INITDB_ROOT_PASSWORD: ylab
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ylab
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ylab
+      ME_CONFIG_MONGODB_SERVER: wallet-mongodb
+
+
+volumes:
+  wallet_db:
+  mongodb-data:
+  mongodb-log:
