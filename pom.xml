@@ -24,6 +24,7 @@
         <module>audit-starter</module>
         <module>execution-time-logging-starter</module>
         <module>common</module>
+        <module>mongodb</module>
     </modules>
 
     <properties>

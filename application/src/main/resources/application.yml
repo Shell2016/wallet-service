@@ -16,6 +16,11 @@ audit:
 spring:
   config:
     activate:
+      on-profile: mongo
+---
+spring:
+  config:
+    activate:
       on-profile: test
   liquibase:
     liquibase-schema: public
